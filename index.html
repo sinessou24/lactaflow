@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LactaFlow — Admin RH & Planning</title>
+<title>LactaFlow — RH & Planning</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--radius:10px;--radius-lg:14px;--err:#A32D2D;--err-bg:#FCEBEB;--ok:#3B6D11;--ok-bg:#EAF3DE}
+:root{--pri:#003d82;--pri-l:#e6edf7;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--radius:10px;--radius-lg:14px;--err:#A32D2D;--err-bg:#FCEBEB;--ok:#3B6D11;--ok-bg:#EAF3DE;--warn:#BA7517;--warn-bg:#FAEEDA}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:14px;min-height:100vh}
 
 .screen { display: none !important; }
@@ -14,18 +14,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 #s-loading { display: none; position: fixed; inset: 0; z-index: 9999; background: #f0f2f5; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
 #s-loading.active { display: flex !important; }
 
-/* LOGIN */
+/* LOGIN & SAISONS */
 .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.login-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');background-size:cover;background-position:center}
-.login-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4)}
-.login-card{position:relative;z-index:2;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:20px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 10px 50px rgba(0,0,0,0.3);text-align:center}
+/* Arrière-plan fixe demandé : Champ de cerisiers */
+#login-bg-img{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1551272744-19456affaa89?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');background-size:cover;background-position:center;transition: background 1s ease-in-out}
+.login-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.3);backdrop-filter: blur(1px)}
+.login-card{position:relative;z-index:10;background:rgba(255, 255, 255, 0.106);backdrop-filter:blur(10px);border-radius:0px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 10px 50px rgba(0,0,0,0.3);text-align:center}
 
-/* UI */
+/* ANIMATION DE SAISON (Pétales) */
+#season-particles { position: absolute; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }
+.particle { position: absolute; top: -10%; color: white; animation: fall linear infinite; }
+@keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); }
+}
+
+/* TOPBAR AVEC LOGO */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100}
+.avatar{width:35px;height:35px;border-radius:50%;object-fit:cover;background:#eee;border:1px solid #ddd;cursor:pointer;transition:0.2s}
+.avatar:hover{opacity:0.8; transform:scale(1.05)}
+
+/* UI ELEMENTS */
 input,select{width:100%;padding:8px;border:1px solid #dde0e8;border-radius:var(--radius);margin-bottom:10px}
-.btn{padding:8px 14px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:600;font-size:12px}
-.btn-p{background:var(--pri);color:#fff;border-color:var(--pri)}
+.btn{padding:8px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:600;font-size:12px}
+.btn-p{background:var(--pri);color:#fff;border-color:var(--pri);border-radius: var(--radius);padding: 8px 12px;}
 .btn-del{background:var(--err-bg);color:var(--err);border-color:var(--err)}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100}
+
 .page{max-width:1100px;margin:0 auto;padding:20px 16px}
 .card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.2rem;margin-bottom:15px}
 
@@ -33,18 +46,32 @@ input,select{width:100%;padding:8px;border:1px solid #dde0e8;border-radius:var(-
 .tab{flex:1;border:none;padding:10px;border-radius:9px;cursor:pointer;font-weight:600;color:#666}
 .tab.active{background:#fff;color:var(--pri);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
 
-/* TABLES */
+/* PLANNING */
+.cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.cg7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cday{min-height:85px;background:#fff;border:1px solid #eee;border-radius:8px;padding:5px;position:relative}
+.cday.weekend{background:#f8f9fa}
+.cday.today{border:2px solid var(--pri) !important}
+.pill{font-size:10px;padding:2px 5px;border-radius:4px;margin-bottom:2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill-cp{background:var(--cp-bg);color:var(--cp);border-left:3px solid var(--cp)}
+.pill-rtt{background:var(--rtt-bg);color:var(--rtt);border-left:3px solid var(--rtt)}
+.pill-tt{background:var(--tt-bg);color:var(--tt);border-left:3px solid var(--tt)}
+
+.legend{display:flex;gap:15px;margin-top:15px;padding-top:10px;border-top:1px solid #eee;justify-content:center}
+.leg-i{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600}
+.dot{width:10px;height:10px;border-radius:50%}
+
+/* ADMIN TABLE */
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:11px;color:#888;padding:10px;text-transform:uppercase}
 td{padding:10px;border-bottom:1px solid #eee}
-.in-small{width:50px; text-align:center; padding:4px; margin:0}
-
-/* STATUS PILLS */
+.in-small{width:50px; text-align:center; padding:4px}
 .st-p{padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase}
 .st-approved{background:var(--ok-bg); color:var(--ok)}
 .st-rejected{background:var(--err-bg); color:var(--err)}
 .st-pending{background:var(--warn-bg); color:var(--warn)}
 
+.hidden{display:none !important}
 .spinner{width:32px;height:32px;border:3px solid #e0e3ea;border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -54,11 +81,14 @@ td{padding:10px;border-bottom:1px solid #eee}
 <div id="s-loading" class="active"><div class="spinner"></div></div>
 
 <div class="screen" id="s-login">
-  <div class="login-screen"><div class="login-bg"></div><div class="login-overlay"></div>
+  <div class="login-screen">
+    <div id="login-bg-img"></div>
+    <div id="season-particles"></div>
+    <div class="login-overlay"></div>
     <div class="login-card">
-      <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="40" style="margin-bottom:20px">
-      <input type="text" id="li-u" placeholder="Identifiant">
-      <input type="password" id="li-p" placeholder="Mot de passe">
+      <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="40" style="margin-bottom:40px">
+      <input type="text" id="li-u" placeholder="Identifiant" style="margin-bottom:20px">
+      <input type="password" id="li-p" placeholder="Mot de passe" style="margin-bottom:20px">
       <button class="btn btn-p" style="width:100%" onclick="doLogin()">Connexion</button>
     </div>
   </div>
@@ -66,61 +96,83 @@ td{padding:10px;border-bottom:1px solid #eee}
 
 <div class="screen" id="s-app">
   <div class="topbar">
-    <div style="display:flex; gap:10px; align-items:center"><strong style="color:var(--pri)">LactaFlow</strong><div id="tb-nav" style="display:flex; gap:5px"></div></div>
-    <button class="btn" onclick="location.reload()">Quitter</button>
+    <div style="display:flex; gap:10px; align-items:center">
+        <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="30">
+        <strong style="color:var(--pri); font-size:18px">LactaFlow</strong>
+        <div id="tb-nav" style="display:flex; gap:5px"></div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px">
+        <input type="file" id="file-up" style="display:none" accept="image/*" onchange="uploadImg(this)">
+        <img id="u-avatar-top" src="" class="avatar" onclick="document.getElementById('file-up').click()" title="Cliquer pour changer de photo">
+        <button class="btn" onclick="logout()">Déconnexion</button>
+    </div>
   </div>
 
   <div class="page">
     <div id="sec-member" class="space-section active">
         <div class="tabs">
             <button class="tab active" onclick="mTab(this,'mt-dash')">Tableau de bord</button>
-            <button class="tab" onclick="mTab(this,'mt-cal')">Planning</button>
-            <button class="tab" onclick="mTab(this,'mt-dem')">Demande</button>
+            <button class="tab" onclick="mTab(this,'mt-cal')">Planning Équipe</button>
         </div>
+        
         <div id="mt-dash">
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:15px">
                 <div class="card" style="text-align:center"><small>CP</small><h2 id="m-cp" style="color:var(--cp)">-</h2></div>
                 <div class="card" style="text-align:center"><small>RTT</small><h2 id="m-rtt" style="color:var(--rtt)">-</h2></div>
                 <div class="card" style="text-align:center"><small>TT</small><h2 id="m-tt" style="color:var(--tt)">-</h2></div>
             </div>
-            <div class="card"><h3>Mes demandes</h3><div id="m-list" style="margin-top:10px"></div></div>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:15px">
+                <div class="card">
+                    <h3>Nouvelle demande</h3>
+                    <div style="margin-top:10px">
+                        <select id="d-type"><option value="cp">Congés Payés</option><option value="rtt">RTT</option><option value="tt">Télétravail</option></select>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+                            <input type="date" id="d-s"><input type="date" id="d-e">
+                        </div>
+                        <button class="btn btn-p" style="width:100%" onclick="submitDem()">Envoyer</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Suivi des demandes (ordre de saisie)</h3>
+                    <div id="m-list"></div>
+                </div>
+            </div>
         </div>
-        <div id="mt-cal" class="hidden"><div class="card"><div id="cal-grid"></div></div></div>
-        <div id="mt-dem" class="hidden">
+
+        <div id="mt-cal" class="hidden">
             <div class="card">
-                <h3>Nouvelle absence</h3>
-                <select id="d-type"><option value="cp">CP</option><option value="rtt">RTT</option><option value="tt">TT</option></select>
-                <input type="date" id="d-s"> <input type="date" id="d-e">
-                <button class="btn btn-p" style="width:100%" onclick="submitDem()">Envoyer</button>
+                <div class="cal-hdr"><button class="btn" onclick="changeMonth(-1)">◀</button><h3 id="cal-month-title"></h3><button class="btn" onclick="changeMonth(1)">▶</button></div>
+                <div class="cg7" id="cal-grid"></div>
+                <div class="legend">
+                    <div class="leg-i"><div class="dot" style="background:var(--cp)"></div> Congés</div>
+                    <div class="leg-i"><div class="dot" style="background:var(--rtt)"></div> RTT</div>
+                    <div class="leg-i"><div class="dot" style="background:var(--tt)"></div> Télétravail</div>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="sec-admin" class="space-section hidden">
-        <div class="tabs">
-            <button class="tab active" onclick="aTab(this,'at-users')">Équipe</button>
-            <button class="tab" onclick="aTab(this,'at-val')">Validations & Historique</button>
-        </div>
+        <div class="tabs"><button class="tab active" onclick="aTab(this,'at-users')">Équipe</button><button class="tab" onclick="aTab(this,'at-val')">Validations</button></div>
         <div id="at-users">
-            <div class="card" id="admin-only-form">
-                <h4>Nouveau membre</h4>
+            <div class="card">
+                <h4>Ajouter un membre</h4>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:10px">
-                    <input type="text" id="new-id" placeholder="ID">
-                    <input type="text" id="new-fn" placeholder="Nom">
-                    <input type="text" id="new-pw" placeholder="Pass">
+                    <input type="text" id="new-id" placeholder="ID"><input type="text" id="new-fn" placeholder="Nom"><input type="text" id="new-pw" placeholder="Pass">
                 </div>
-                <button class="btn btn-p" onclick="addUser()">Créer</button>
+                <button class="btn btn-p" onclick="addUser()">Créer le compte</button>
             </div>
             <div class="card">
                 <table>
-                    <thead><tr><th>Membre</th><th>CP / RTT / TT</th><th class="col-roles">Rôles</th><th>Actions</th></tr></thead>
+                    <thead><tr><th>Membre</th><th>CP / RTT / TT</th><th id="th-roles">Rôles</th><th>Actions</th></tr></thead>
                     <tbody id="admin-list"></tbody>
                 </table>
             </div>
         </div>
         <div id="at-val" class="hidden">
-            <div class="card"><h4>En attente</h4><div id="val-pending" style="margin-top:10px"></div></div>
-            <div class="card"><h4>Historique des décisions</h4><div id="val-history" style="margin-top:10px"></div></div>
+            <div class="card"><h4>En attente</h4><div id="val-pending"></div></div>
+            <div class="card"><h4>Historique (ordre de saisie)</h4><div id="val-history"></div></div>
         </div>
     </div>
   </div>
@@ -128,40 +180,38 @@ td{padding:10px;border-bottom:1px solid #eee}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDocs, updateDoc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDocs, updateDoc, setDoc, deleteDoc, collection, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCw6EmX6iJQSi5OucFxi9d6wuHx1Gxlj3w",
-    authDomain: "lactaflow-bo.firebaseapp.com",
-    projectId: "lactaflow-bo",
-    storageBucket: "lactaflow-bo.firebasestorage.app",
-    messagingSenderId: "549009598191",
-    appId: "1:549009598191:web:c6ee7bd6569c7a3f05dd1a"
-};
-
+const firebaseConfig = { apiKey: "AIzaSyCw6EmX6iJQSi5OucFxi9d6wuHx1Gxlj3w", authDomain: "lactaflow-bo.firebaseapp.com", projectId: "lactaflow-bo", storageBucket: "lactaflow-bo.firebasestorage.app", messagingSenderId: "549009598191", appId: "1:549009598191:web:c6ee7bd6569c7a3f05dd1a" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let CU = null, DB_USERS = {}, DB_DEMANDS = [];
+let CU = null, DB_USERS = {}, DB_DEMANDS = [], currentMonth = new Date();
 
-async function initData() {
-    onSnapshot(collection(db, 'users'), s => {
-        s.forEach(d => DB_USERS[d.id.toLowerCase()] = {id: d.id, ...d.data()});
-        if(CU) refreshUI();
-    });
-    onSnapshot(collection(db, 'demands'), s => {
-        DB_DEMANDS = [];
-        s.forEach(d => DB_DEMANDS.push({id: d.id, ...d.data()}));
-        if(CU) refreshUI();
-    });
-    document.getElementById('s-loading').classList.remove('active');
-    document.getElementById('s-login').classList.add('active');
+// --- GESTION DE L'ANIMATION SAISONNIÈRE (Pétales) ---
+function createSeasonParticles() {
+    const parts = document.getElementById('season-particles');
+    parts.innerHTML = '';
+    // Création de 20 pétales animées
+    for(let i=0; i<20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.textContent = '🌸'; // Pétale de cerisier
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.fontSize = (Math.random() * 10 + 15) + 'px';
+        p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        p.style.animationDelay = (Math.random() * 5) + 's';
+        p.style.opacity = Math.random();
+        parts.appendChild(p);
+    }
 }
 
+document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !CU) doLogin(); });
+
 async function doLogin() {
-    const u = document.getElementById('li-u').value.trim().toLowerCase();
-    const p = document.getElementById('li-p').value;
+    const u = document.getElementById('li-u').value.trim().toLowerCase(), p = document.getElementById('li-p').value;
     if(DB_USERS[u] && DB_USERS[u].pass === p) {
         CU = DB_USERS[u].id;
+        localStorage.setItem('lactaflow_user', CU);
         document.getElementById('s-login').classList.remove('active');
         document.getElementById('s-app').classList.add('active');
         refreshUI();
@@ -169,60 +219,57 @@ async function doLogin() {
 }
 
 function refreshUI() {
-    const u = DB_USERS[CU.toLowerCase()];
+    const u = DB_USERS[CU.toLowerCase()]; if(!u) return;
     document.getElementById('m-cp').textContent = u.cp || 0;
     document.getElementById('m-rtt').textContent = u.rtt || 0;
     document.getElementById('m-tt').textContent = u.tt || 0;
+    document.getElementById('u-avatar-top').src = u.img || 'https://ui-avatars.com/api/?background=random&name=' + u.fn;
     
     const nav = document.getElementById('tb-nav');
-    nav.innerHTML = `<button class="btn" onclick="switchSpace('member')">Mon Espace</button>`;
+    nav.innerHTML = `<button id="btn-member" class="btn btn-p active-nav" onclick="switchSpace('member')">Mon Espace</button>`;
     if(u.admin || u.manager) {
-        nav.innerHTML += `<button class="btn btn-p" onclick="switchSpace('admin')">Manager</button>`;
-        renderAdmin();
+    nav.innerHTML += `<button id="btn-admin" class="btn" onclick="switchSpace('admin')">Manager</button>`;
+    renderAdmin();
     }
-    renderMyDemands();
+    renderMyDemands(); renderCalendar();
 }
 
-// --- ADMIN / MANAGER ---
-async function saveCounters(id) {
-    const cp = parseInt(document.getElementById(`in-cp-${id}`).value);
-    const rtt = parseInt(document.getElementById(`in-rtt-${id}`).value);
-    const tt = parseInt(document.getElementById(`in-tt-${id}`).value);
-    await updateDoc(doc(db, 'users', id), { cp, rtt, tt });
-    alert("Compteurs mis à jour !");
+async function uploadImg(input) {
+    if(!input.files[0]) return;
+    const formData = new FormData(); formData.append("image", input.files[0]);
+    try {
+        const res = await fetch("https://api.imgbb.com/1/upload?key=698e64c39050f214f4f7f6f16428619d", { method: "POST", body: formData });
+        const data = await res.json();
+        if(data.success) await updateDoc(doc(db, 'users', CU), { img: data.data.url });
+    } catch(e) { alert("Erreur transfert image"); }
 }
 
 function renderAdmin() {
-    const uCur = DB_USERS[CU.toLowerCase()];
-    const list = document.getElementById('admin-list');
+    const uCur = DB_USERS[CU.toLowerCase()], list = document.getElementById('admin-list'), isIgor = uCur.id === 'igor';
     list.innerHTML = '';
-    
-    // Restriction Formulaire Ajout
-    document.getElementById('admin-only-form').style.display = uCur.id === 'igor' ? 'block' : 'none';
+    document.getElementById('th-roles').style.display = isIgor ? 'table-cell' : 'none';
 
     Object.values(DB_USERS).forEach(u => {
         const tr = document.createElement('tr');
-        const isIgor = uCur.id === 'igor';
         tr.innerHTML = `
-            <td><strong>${u.fn}</strong></td>
+            <td><strong>${u.fn}</strong><br><small>${u.id}</small></td>
             <td>
                 <input type="number" id="in-cp-${u.id}" class="in-small" value="${u.cp||0}">
                 <input type="number" id="in-rtt-${u.id}" class="in-small" value="${u.rtt||0}">
                 <input type="number" id="in-tt-${u.id}" class="in-small" value="${u.tt||0}">
             </td>
-            <td class="col-roles" style="${isIgor?'':'display:none'}">
+            <td style="${isIgor?'':'display:none'}">
                 <input type="checkbox" ${u.manager?'checked':''} onchange="updateRole('${u.id}','manager',this.checked)"> M
                 <input type="checkbox" ${u.admin?'checked':''} onchange="updateRole('${u.id}','admin',this.checked)"> A
             </td>
             <td>
-                <button class="btn" onclick="saveCounters('${u.id}')">💾</button>
-                ${isIgor ? `<button class="btn btn-del" onclick="deleteUser('${u.id}')">X</button>` : ''}
-            </td>
-        `;
+                <button class="btn" onclick="saveUserFull('${u.id}')">💾</button>
+                <button class="btn" onclick="resetPass('${u.id}')">PW</button>
+                <button class="btn btn-del" onclick="deleteUser('${u.id}')">X</button>
+            </td>`;
         list.appendChild(tr);
     });
-
-    // Validations & Historique
+    
     const pList = document.getElementById('val-pending'), hList = document.getElementById('val-history');
     pList.innerHTML = ''; hList.innerHTML = '';
     
@@ -230,43 +277,130 @@ function renderAdmin() {
         const user = DB_USERS[d.uid.toLowerCase()];
         const html = `<div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px">
             <div><strong>${user?user.fn:d.uid}</strong> - ${d.type.toUpperCase()}<br><small>${d.start} au ${d.end}</small></div>
-            ${d.status === 'pending' ? 
-                `<div><button class="btn btn-p" onclick="decide('${d.id}','approved')">V</button> <button class="btn btn-del" onclick="decide('${d.id}','rejected')">X</button></div>` :
-                `<span class="st-p st-${d.status}">${d.status}</span>`}
+            ${d.status === 'pending' ? `<div><button class="btn btn-p" onclick="decide('${d.id}','approved')">V</button> <button class="btn btn-del" onclick="decide('${d.id}','rejected')">X</button></div>` : `<span class="st-p st-${d.status}">${d.status}</span>`}
         </div>`;
         if(d.status === 'pending') pList.innerHTML += html; else hList.innerHTML += html;
     });
 }
 
-async function decide(id, status) { await updateDoc(doc(db, 'demands', id), { status }); }
+async function saveUserFull(id) {
+    const cp = parseInt(document.getElementById(`in-cp-${id}`).value), rtt = parseInt(document.getElementById(`in-rtt-${id}`).value), tt = parseInt(document.getElementById(`in-tt-${id}`).value);
+    await updateDoc(doc(db, 'users', id), { cp, rtt, tt });
+    alert("Compteurs sauvegardés");
+}
+async function resetPass(id) { const n = prompt("Nouveau MDP pour " + id); if(n) await updateDoc(doc(db, 'users', id), { pass: n }); }
 async function updateRole(id, role, val) { const up = {}; up[role] = val; await updateDoc(doc(db, 'users', id), up); }
 async function addUser() {
-    const id = document.getElementById('new-id').value.trim().toLowerCase();
-    const fn = document.getElementById('new-fn').value, pass = document.getElementById('new-pw').value;
-    await setDoc(doc(db, 'users', id), { fn, pass, cp:25, rtt:10, tt:2, manager:false, admin:false });
+    const id = document.getElementById('new-id').value.trim().toLowerCase(), fn = document.getElementById('new-fn').value, p = document.getElementById('new-pw').value;
+    if(id && fn && p) await setDoc(doc(db, 'users', id), { fn, pass:p, cp:25, rtt:10, tt:2, manager:false, admin:false });
 }
 async function deleteUser(id) { if(confirm("Supprimer ?")) await deleteDoc(doc(db, 'users', id)); }
+async function decide(id, status) {
+    await updateDoc(doc(db, 'demands', id), { status });
+    
+    if(status === 'approved') {
+        const demand = DB_DEMANDS.find(d => d.id === id);
+        if(!demand) return;
+        
+        // Calcul du nombre de jours ouvrés
+        let count = 0;
+        let cur = new Date(demand.start);
+        const end = new Date(demand.end);
+        while(cur <= end) {
+            const day = cur.getDay();
+            if(day !== 0 && day !== 6) count++; // exclure samedi/dimanche
+            cur.setDate(cur.getDate() + 1);
+        }
+        
+        // Déduction du solde
+        const user = DB_USERS[demand.uid.toLowerCase()];
+        if(!user) return;
+        const field = demand.type; // 'cp', 'rtt', ou 'tt'
+        const newVal = (user[field] || 0) - count;
+        await updateDoc(doc(db, 'users', demand.uid), { [field]: newVal });
+    }
+}
 
-// --- MEMBRE ---
+function renderCalendar() {
+    const grid = document.getElementById('cal-grid'); if(!grid) return; grid.innerHTML = '';
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const y = currentMonth.getFullYear(), m = currentMonth.getMonth();
+    
+    document.getElementById('cal-month-title').textContent = new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(currentMonth);
+    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => grid.innerHTML += `<div style="text-align:center;font-weight:700;color:#888">${d}</div>`);
+    
+    let offset = (new Date(y, m, 1).getDay() || 7) - 1;
+    for(let i=0; i<offset; i++) grid.innerHTML += `<div class="cday" style="background:#fcfcfc"></div>`;
+    
+    for(let d=1; d<=new Date(y,m+1,0).getDate(); d++) {
+        const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayOfWeek = new Date(y, m, d).getDay();
+        const isWE = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isToday = (ds === todayStr);
+        
+        let html = `<div class="cday ${isWE?'weekend':''} ${isToday?'today':''}"><span style="font-weight:700;font-size:11px">${d}</span>`;
+        DB_DEMANDS.filter(dem => dem.status === 'approved' && ds >= dem.start && ds <= dem.end).forEach(dem => {
+            const u = DB_USERS[dem.uid.toLowerCase()];
+            html += `<span class="pill pill-${dem.type}">${u?u.fn:dem.uid}</span>`;
+        });
+        grid.innerHTML += html + `</div>`;
+    }
+}
 async function submitDem() {
-    const type = document.getElementById('d-type').value, start = document.getElementById('d-s').value, end = document.getElementById('d-e').value;
-    await setDoc(doc(collection(db, 'demands')), { uid:CU, type, start, end, status:'pending' });
-    alert("Envoyé !");
+    const t = document.getElementById('d-type').value, s = document.getElementById('d-s').value, e = document.getElementById('d-e').value;
+    if(s && e) { await setDoc(doc(collection(db, 'demands')), { uid:CU, type:t, start:s, end:e, status:'pending', created: serverTimestamp() }); alert("Demande enregistrée"); }
 }
 function renderMyDemands() {
-    const l = document.getElementById('m-list'); l.innerHTML = '';
-    DB_DEMANDS.filter(d => d.uid === CU).reverse().forEach(d => {
-        l.innerHTML += `<div style="padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between">
-            <span>${d.type.toUpperCase()} (${d.start})</span> <span class="st-p st-${d.status}">${d.status}</span>
+    const l = document.getElementById('m-list'); if(!l) return; l.innerHTML = '';
+    DB_DEMANDS.filter(d => d.uid === CU).forEach(d => {
+        l.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between">
+            <span><strong>${d.type.toUpperCase()}</strong> (${d.start})</span> <span class="st-p st-${d.status}">${d.status}</span>
         </div>`;
     });
 }
 
-function mTab(b, id) { document.querySelectorAll('#sec-member .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active'); ['mt-dash','mt-cal','mt-dem'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-function aTab(b, id) { document.querySelectorAll('#sec-admin .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active'); ['at-users','at-val'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-function switchSpace(s) { document.querySelectorAll('.space-section').forEach(x=>x.classList.add('hidden')); document.getElementById('sec-'+s).classList.remove('hidden'); }
+async function initData() {
+    createSeasonParticles();
+    const saved = localStorage.getItem('lactaflow_user');
+    if(saved) CU = saved;
 
-window.doLogin=doLogin; window.submitDem=submitDem; window.mTab=mTab; window.aTab=aTab; window.switchSpace=switchSpace; window.updateRole=updateRole; window.addUser=addUser; window.deleteUser=deleteUser; window.decide=decide; window.saveCounters=saveCounters;
+    onSnapshot(collection(db, 'users'), s => { DB_USERS = {}; s.forEach(d => DB_USERS[d.id.toLowerCase()] = {id: d.id, ...d.data()}); if(CU) refreshUI(); });
+    onSnapshot(collection(db, 'demands'), s => { 
+        let tempArr = [];
+        s.forEach(d => tempArr.push({id: d.id, ...d.data()})); 
+        tempArr.sort((a, b) => {
+            let tA = a.created ? a.created.toMillis() : 0;
+            let tB = b.created ? b.created.toMillis() : 0;
+            return tB - tA;
+        });
+        DB_DEMANDS = tempArr;
+        if(CU) refreshUI(); 
+    });
+
+    if(CU) {
+        document.getElementById('s-loading').classList.remove('active');
+        document.getElementById('s-app').classList.add('active');
+    } else {
+        document.getElementById('s-loading').classList.remove('active');
+        document.getElementById('s-login').classList.add('active');
+    }
+}
+
+function mTab(b, id) { document.querySelectorAll('#sec-member .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active'); ['mt-dash','mt-cal'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function aTab(b, id) { document.querySelectorAll('#sec-admin .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active'); ['at-users','at-val'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function switchSpace(s) {
+    document.querySelectorAll('.space-section').forEach(x => x.classList.add('hidden'));
+    document.getElementById('sec-' + s).classList.remove('hidden');
+    document.getElementById('btn-member')?.classList.toggle('btn-p', s === 'member');
+    document.getElementById('btn-member')?.classList.toggle('btn', s !== 'member');
+    document.getElementById('btn-admin')?.classList.toggle('btn-p', s === 'admin');
+    document.getElementById('btn-admin')?.classList.toggle('btn', s !== 'admin');
+}
+function changeMonth(dir) { currentMonth.setMonth(currentMonth.getMonth()+dir); renderCalendar(); }
+function logout() { localStorage.removeItem('lactaflow_user'); location.reload(); }
+
+window.doLogin=doLogin; window.submitDem=submitDem; window.mTab=mTab; window.aTab=aTab; window.switchSpace=switchSpace; window.updateRole=updateRole; window.addUser=addUser; window.deleteUser=deleteUser; window.decide=decide; window.saveUserFull=saveUserFull; window.changeMonth=changeMonth; window.uploadImg=uploadImg; window.resetPass=resetPass;window.logout=logout;
 initData();
 </script>
 </body>
