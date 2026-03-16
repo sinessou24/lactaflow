@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LactaFlow — Planning équipe</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--warn:#BA7517;--warn-bg:#FAEEDA;--ok:#3B6D11;--ok-bg:#EAF3DE;--err:#A32D2D;--err-bg:#FCEBEB;--adm:#854F0B;--adm-bg:#FAC775;--radius:10px;--radius-lg:14px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:14px;min-height:100vh}
+.screen{display:none}.screen.active{display:block}
+input,select{width:100%;padding:9px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;color:#1a1a1a;font-size:13px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:var(--pri)}
+button{font-family:inherit;cursor:pointer}
+.btn{padding:8px 16px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;color:#1a1a1a;font-size:13px}
+.btn:hover{background:#f5f7fa}
+.btn-p{background:var(--pri);color:#fff;border-color:var(--pri)}.btn-p:hover{background:var(--pri-d)}
+.btn-ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.btn-err{background:var(--err);color:#fff;border-color:var(--err)}
+.btn-w{background:var(--warn);color:#fff;border-color:var(--warn)}
+.btn-sm{padding:5px 12px;font-size:12px}.btn-xs{padding:3px 9px;font-size:11px}
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.login-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.login-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.38)}
+.login-card{position:relative;z-index:2;background:rgba(255,255,255,0.93);backdrop-filter:blur(8px);border-radius:20px;padding:2.2rem;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.18)}
+.login-hdr{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:1.8rem;text-align:center}
+.login-logo{height:46px;width:auto}
+.login-bar{width:40px;height:3px;background:var(--pri);border-radius:2px}
+.login-app{font-size:17px;font-weight:600;color:var(--pri)}
+.login-sub{font-size:12px;color:#666}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;color:#555;margin-bottom:5px;font-weight:500}
+.emsg{font-size:12px;margin-top:5px;padding:7px 10px;border-radius:8px}
+.emsg.err{background:var(--err-bg);color:#791F1F}.emsg.ok{background:var(--ok-bg);color:#27500A}
+.season-pill{position:absolute;top:16px;right:16px;z-index:3;font-size:12px;font-weight:500;padding:5px 14px;border-radius:20px;background:rgba(255,255,255,0.85);color:#333}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.tb-left{display:flex;align-items:center;gap:14px}
+.tb-logo{height:30px;width:auto}
+.tb-div{width:1px;height:26px;background:#e0e3ea}
+.tb-app{font-size:13px;font-weight:600;color:var(--pri)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-user{display:flex;align-items:center;gap:8px}
+.rbadge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+.rm{background:var(--pri-l);color:var(--pri)}.rmgr{background:var(--rtt-bg);color:#04342C}.radm{background:var(--adm-bg);color:var(--adm)}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;overflow:hidden;background:var(--pri-l);color:var(--pri)}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.av-s{width:30px;height:30px;font-size:11px}.av-m{width:40px;height:40px;font-size:14px}.av-l{width:56px;height:56px;font-size:18px}
+.page{max-width:900px;margin:0 auto;padding:20px 16px}
+.card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.1rem 1.3rem;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.ctitle{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.tabs{display:flex;gap:3px;padding:4px;background:#f0f2f5;border-radius:var(--radius-lg);margin-bottom:16px;flex-wrap:wrap}
+.tab{flex:1;min-width:80px;padding:8px 10px;border:none;background:transparent;border-radius:var(--radius);font-size:12px;cursor:pointer;color:#666;text-align:center;white-space:nowrap}
+.tab.active{background:#fff;color:#1a1a1a;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.badge{display:inline-block;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:500}
+.b-cp{background:var(--cp-bg);color:#042C53}.b-rtt{background:var(--rtt-bg);color:#04342C}.b-tt{background:var(--tt-bg);color:#26215C}
+.b-attente{background:var(--warn-bg);color:#412402}.b-approuve{background:var(--ok-bg);color:#173404}.b-refuse{background:var(--err-bg);color:#501313}
+.cgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.ctr{background:#f8f9fc;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:14px;text-align:center}
+.cval{font-size:26px;font-weight:700;line-height:1.2}.clbl{font-size:11px;color:#888;margin-bottom:3px}.csub{font-size:10px;color:#aaa}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cg7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.cdh{text-align:center;font-size:10px;color:#999;padding:4px 0;font-weight:600}
+.cday{min-height:64px;background:#f8f9fc;border-radius:8px;padding:4px;border:1px solid #eee}
+.cday.today{border-color:var(--pri);background:#f0f4ff}.cday.other{opacity:.3}
+.cdn{font-size:11px;color:#999}
+.cpill{font-size:9px;padding:2px 5px;border-radius:4px;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.6}
+.wk-tag{font-size:11px;padding:3px 7px;border-radius:6px;display:inline-block;font-weight:500}
+.wkt-bureau{background:#f0faf4;color:#27500A;border:1px solid #c0dd97}
+.wkt-cp{background:var(--cp-bg);color:#042C53}.wkt-rtt{background:var(--rtt-bg);color:#04342C}.wkt-tt{background:var(--tt-bg);color:#26215C}
+.drow{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid #f0f2f5}
+.drow:last-child{border-bottom:none}
+.dinfo{flex:1;min-width:0}.dwho{font-weight:600;font-size:13px}.ddet{color:#888;font-size:12px;margin-top:2px}
+.empty{color:#aaa;text-align:center;padding:2rem;font-size:13px}
+.amc{border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:12px;background:#fff}
+.ami{flex:1;min-width:0}.ambg{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem}
+.modal{background:#fff;border-radius:var(--radius-lg);padding:1.6rem;width:100%;max-width:430px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.18)}
+.mtitle{font-size:16px;font-weight:600;margin-bottom:16px}
+.pwd-banner{background:var(--warn-bg);border:1px solid var(--warn);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;font-size:13px;color:#412402}
+.pwd-banner strong{display:block;margin-bottom:3px}
+hr{border:none;border-top:1px solid #f0f2f5;margin:14px 0}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hidden{display:none!important}
+.loading{display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:14px;color:#888;flex-direction:column;gap:12px;position:fixed;inset:0;z-index:9999;background:#f0f2f5}
+.spinner{width:32px;height:32px;border:3px solid #e0e3ea;border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="s-loading" class="loading active screen" style="position:fixed;inset:0;z-index:9999;background:#f0f2f5"><div class="spinner"></div><div>Chargement de LactaFlow...</div></div>
+
+<div class="screen" id="s-login">
+  <div class="login-screen">
+    <div class="login-bg" id="login-bg"></div>
+    <div class="login-overlay"></div>
+    <div class="season-pill" id="season-pill"></div>
+    <div class="login-card">
+      <div class="login-hdr">
+        <img class="login-logo" src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" alt="Lactalis International" onerror="this.outerHTML='<div style=\'font-size:17px;font-weight:700;color:var(--pri)\'>LACTALIS INTERNATIONAL</div>'">
+        <div class="login-bar"></div>
+        <div class="login-app">LactaFlow</div>
+        <div class="login-sub">Gestion des absences &amp; télétravail</div>
+      </div>
+      <div class="field"><label>Identifiant</label><input type="text" id="li-u" placeholder="prenom" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="li-p" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <div id="li-err" class="emsg err hidden"></div>
+      <button class="btn btn-p" style="width:100%;margin-top:10px;padding:10px" onclick="doLogin()">Se connecter</button>
+      <div style="margin-top:12px;background:#f8f9fc;padding:10px;border-radius:var(--radius);font-size:11px;color:#888">Identifiant = prénom (minuscules) · Mot de passe initial = identifiant</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-pwd">
+  <div class="login-screen">
+    <div class="login-bg" id="pwd-bg"></div>
+    <div class="login-overlay"></div>
+    <div class="login-card">
+      <div class="login-hdr">
+        <img class="login-logo" src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" alt="Lactalis" onerror="this.style.display='none'">
+        <div class="login-bar"></div>
+        <div class="login-app">Premier accès</div>
+      </div>
+      <div class="pwd-banner"><strong>Changement de mot de passe requis</strong>Choisissez un nouveau mot de passe pour continuer.</div>
+      <div class="field"><label>Nouveau mot de passe (min. 6 caractères)</label><input type="password" id="np1"/></div>
+      <div class="field"><label>Confirmation</label><input type="password" id="np2" onkeydown="if(event.key==='Enter')savePwd()"/></div>
+      <div id="pwd-err" class="emsg err hidden"></div>
+      <button class="btn btn-p" style="width:100%;margin-top:10px;padding:10px" onclick="savePwd()">Enregistrer et continuer</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-app">
+  <div class="topbar">
+    <div class="tb-left">
+      <img class="tb-logo" src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" alt="Lactalis" onerror="this.outerHTML='<span style=\'font-size:13px;font-weight:700;color:var(--pri)\'>LACTALIS INT.</span>'">
+      <div class="tb-div"></div><div class="tb-app">LactaFlow</div>
+      <div id="tb-nav" style="display:flex;gap:4px;margin-left:16px"></div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-user">
+        <div class="av av-s" id="tb-av"></div>
+        <div style="line-height:1.3"><div style="font-size:13px;font-weight:600" id="tb-name"></div><div id="tb-roles"></div></div>
+      </div>
+      <button class="btn btn-sm" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="screen page" id="s-member">
+    <div class="tabs">
+      <button class="tab active" onclick="mTab(this,'mt-dash')">Tableau de bord</button>
+      <button class="tab" onclick="mTab(this,'mt-dem')">Nouvelle demande</button>
+      <button class="tab" onclick="mTab(this,'mt-mes')">Mes demandes</button>
+      <button class="tab" onclick="mTab(this,'mt-cal')">Calendrier équipe</button>
+    </div>
+    <div id="mt-dash">
+      <div class="cgrid">
+        <div class="ctr"><div class="clbl">Congés restants</div><div class="cval" style="color:var(--cp)" id="m-cp">—</div><div class="csub">jours / 25</div></div>
+        <div class="ctr"><div class="clbl">RTT restants</div><div class="cval" style="color:var(--rtt)" id="m-rtt">—</div><div class="csub">jours / 12</div></div>
+        <div class="ctr"><div class="clbl">TT ce mois</div><div class="cval" style="color:var(--tt)" id="m-tt">—</div><div class="csub">jours posés</div></div>
+      </div>
+      <div class="card"><div class="ctitle">Ma semaine</div><div id="m-week"></div></div>
+    </div>
+    <div id="mt-dem" class="hidden">
+      <div class="card">
+        <div class="ctitle">Déposer une demande</div>
+        <div class="field"><label>Type</label><select id="d-type"><option value="cp">Congé payé (CP)</option><option value="rtt">RTT</option><option value="tt">Télétravail</option></select></div>
+        <div class="r2"><div class="field"><label>Date début</label><input type="date" id="d-s"/></div><div class="field"><label>Date fin</label><input type="date" id="d-e"/></div></div>
+        <div class="field"><label>Commentaire</label><input type="text" id="d-c" placeholder="Optionnel..."/></div>
+        <div id="d-err" class="emsg err hidden"></div><div id="d-ok" class="emsg ok hidden"></div>
+        <button class="btn btn-p" style="margin-top:8px" onclick="submitDem()">Envoyer la demande</button>
+      </div>
+    </div>
+    <div id="mt-mes" class="hidden"><div class="card"><div class="ctitle">Mes demandes</div><div id="m-mydem"></div></div></div>
+    <div id="mt-cal" class="hidden">
+      <div class="card">
+        <div class="cal-nav"><button class="btn btn-sm" onclick="calMv(-1,'m')">←</button><span style="font-weight:600;font-size:14px" id="m-cal-t"></span><button class="btn btn-sm" onclick="calMv(1,'m')">→</button></div>
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><span class="badge b-cp">CP</span><span class="badge b-rtt">RTT</span><span class="badge b-tt">Télétravail</span></div>
+        <div class="cg7" id="m-cal-h"></div><div class="cg7" style="margin-top:3px" id="m-cal-b"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen page" id="s-manager">
+    <div class="tabs">
+      <button class="tab active" onclick="mgTab(this,'mg-dem')">Demandes <span id="pcnt" style="background:var(--warn-bg);color:#412402;border-radius:10px;padding:1px 7px;font-size:10px;margin-left:3px">0</span></button>
+      <button class="tab" onclick="mgTab(this,'mg-wk')">Vue semaine</button>
+      <button class="tab" onclick="mgTab(this,'mg-cal')">Calendrier</button>
+      <button class="tab" onclick="mgTab(this,'mg-team')">Équipe</button>
+    </div>
+    <div id="mg-dem"><div class="card"><div class="ctitle">En attente</div><div id="mg-pend"></div></div><div class="card"><div class="ctitle">Historique</div><div id="mg-hist"></div></div></div>
+    <div id="mg-wk" class="hidden"><div class="card"><div class="cal-nav"><button class="btn btn-sm" onclick="wkMv(-1)">←</button><span style="font-weight:600;font-size:14px" id="mg-wk-t"></span><button class="btn btn-sm" onclick="wkMv(1)">→</button></div><div style="overflow-x:auto"><div id="mg-week" style="min-width:540px"></div></div></div></div>
+    <div id="mg-cal" class="hidden"><div class="card"><div class="cal-nav"><button class="btn btn-sm" onclick="calMv(-1,'mg')">←</button><span style="font-weight:600;font-size:14px" id="mg-cal-t"></span><button class="btn btn-sm" onclick="calMv(1,'mg')">→</button></div><div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"><span class="badge b-cp">CP</span><span class="badge b-rtt">RTT</span><span class="badge b-tt">Télétravail</span></div><div class="cg7" id="mg-cal-h"></div><div class="cg7" style="margin-top:3px" id="mg-cal-b"></div></div></div>
+    <div id="mg-team" class="hidden"><div class="card"><div class="ctitle">Soldes équipe</div><div id="mg-team-list"></div></div></div>
+  </div>
+
+  <div class="screen page" id="s-admin">
+    <div class="tabs">
+      <button class="tab active" onclick="adTab(this,'ad-list')">Membres</button>
+      <button class="tab" onclick="adTab(this,'ad-add')">Ajouter un membre</button>
+    </div>
+    <div id="ad-list"><div class="card"><div class="ctitle">Gestion des membres</div><div id="ad-members"></div></div></div>
+    <div id="ad-add" class="hidden">
+      <div class="card">
+        <div class="ctitle">Nouveau membre</div>
+        <div class="r2"><div class="field"><label>Prénom</label><input type="text" id="a-fn"/></div><div class="field"><label>Nom</label><input type="text" id="a-ln"/></div></div>
+        <div class="field"><label>Identifiant (login)</label><input type="text" id="a-uid" placeholder="prenom sans accent ni espace"/></div>
+        <div class="field"><label>Date d'arrivée</label><input type="date" id="a-date"/></div>
+        <div class="field"><label>Rôle</label><select id="a-role"><option value="member">Membre</option><option value="manager">Manager</option></select></div>
+        <div id="a-err" class="emsg err hidden"></div><div id="a-ok" class="emsg ok hidden"></div>
+        <button class="btn btn-p" style="margin-top:8px" onclick="addMember()">Créer le compte</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="m-edit" class="hidden">
+  <div class="moverlay" onclick="closeEdit(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="mtitle">Modifier le profil</div>
+      <input type="hidden" id="e-uid"/>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div class="av av-l" id="e-av"></div>
+        <div><label class="btn btn-sm" style="cursor:pointer;display:inline-block">Changer la photo<input type="file" id="e-photo" accept="image/*" style="display:none" onchange="previewPhoto(this)"/></label><div style="font-size:11px;color:#999;margin-top:4px">JPG, PNG, GIF</div></div>
+      </div>
+      <div class="r2"><div class="field"><label>Prénom</label><input type="text" id="e-fn"/></div><div class="field"><label>Nom</label><input type="text" id="e-ln"/></div></div>
+      <div class="field"><label>Date d'arrivée</label><input type="date" id="e-date"/></div>
+      <div class="field"><label>Rôle</label><select id="e-role"><option value="member">Membre</option><option value="manager">Manager</option></select></div>
+      <div class="r2"><div class="field"><label>Solde CP</label><input type="number" id="e-cp" min="0" max="50"/></div><div class="field"><label>Solde RTT</label><input type="number" id="e-rtt" min="0" max="30"/></div></div>
+      <hr>
+      <div style="font-size:12px;color:#999;margin-bottom:8px">Réinitialiser le mot de passe temporaire (= identifiant)</div>
+      <button class="btn btn-w btn-sm" onclick="resetPwd()">Réinitialiser le mot de passe</button>
+      <hr>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-sm" onclick="closeEdit()">Annuler</button><button class="btn btn-p btn-sm" onclick="saveEdit()">Enregistrer</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="m-del" class="hidden">
+  <div class="moverlay" onclick="closeDel(event)">
+    <div class="modal" onclick="event.stopPropagation()" style="max-width:340px">
+      <div class="mtitle">Supprimer le membre</div>
+      <p style="font-size:13px;color:#888;margin-bottom:16px">Supprimer définitivement <strong id="del-name"></strong> et toutes ses demandes ?</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-sm" onclick="closeDel()">Annuler</button><button class="btn btn-err btn-sm" onclick="confirmDel()">Supprimer</button></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,doc,getDoc,getDocs,setDoc,updateDoc,deleteDoc,collection,onSnapshot,writeBatch}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyCw6EmX6iJQSi5OucFxi9d6wuHx1Gxlj3w",authDomain:"lactaflow-bo.firebaseapp.com",projectId:"lactaflow-bo",storageBucket:"lactaflow-bo.firebasestorage.app",messagingSenderId:"549009598191",appId:"1:549009598191:web:c6ee7bd6569c7a3f05dd1a"});
+const db=getFirestore(app);
+
+const SEASONS={spring:{label:'🌸 Printemps',url:'https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=1400&q=80'},summer:{label:'☀️ Été',url:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&q=80'},autumn:{label:'🍂 Automne',url:'https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6?w=1400&q=80'},winter:{label:'❄️ Hiver',url:'https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=1400&q=80'}};
+const m=new Date().getMonth(),season=m>=2&&m<=4?'spring':m>=5&&m<=7?'summer':m>=8&&m<=10?'autumn':'winter',s=SEASONS[season];
+document.getElementById('login-bg').style.backgroundImage=`url('${s.url}')`;
+document.getElementById('pwd-bg').style.backgroundImage=`url('${s.url}')`;
+document.getElementById('season-pill').textContent=s.label;
+
+let CU=null,DB_USERS={},DB_DEMANDS={};
+let calY=new Date().getFullYear(),calM=new Date().getMonth(),calYm=new Date().getFullYear(),calMm=new Date().getMonth();
+let wkOff=0,editPhotoData=null,delTarget=null;
+
+const C=(n)=>collection(db,n);
+const DR=(c,id)=>doc(db,c,id);
+async function FG(c,id){const s=await getDoc(DR(c,id));return s.exists()?s.data():null}
+async function FS(c,id,d){await setDoc(DR(c,id),d)}
+async function FU(c,id,d){await updateDoc(DR(c,id),d)}
+async function FD(c,id){await deleteDoc(DR(c,id))}
+async function FA(c){const s=await getDocs(C(c));const r={};s.forEach(d=>r[d.id]=d.data());return r}
+
+async function initData(){
+  show('s-loading');
+  try{
+    const ex=await FA('users');
+    if(!Object.keys(ex).length){
+      const t=toISO(new Date());
+      const du={igor:{fn:'Igor',ln:'',uid:'igor',role:'member',admin:true,pass:'igor',mustChange:false,photo:null,arrived:t,cp:25,rtt:12},melisande:{fn:'Mélisande',ln:'',uid:'melisande',role:'member',admin:false,pass:'melisande',mustChange:true,photo:null,arrived:t,cp:25,rtt:12},petra:{fn:'Petra',ln:'',uid:'petra',role:'member',admin:false,pass:'petra',mustChange:true,photo:null,arrived:t,cp:25,rtt:12},clarisse:{fn:'Clarisse',ln:'',uid:'clarisse',role:'member',admin:false,pass:'clarisse',mustChange:true,photo:null,arrived:t,cp:25,rtt:12},oceane:{fn:'Océane',ln:'',uid:'oceane',role:'member',admin:false,pass:'oceane',mustChange:true,photo:null,arrived:t,cp:25,rtt:12},julie:{fn:'Julie',ln:'',uid:'julie',role:'member',admin:false,pass:'julie',mustChange:true,photo:null,arrived:t,cp:25,rtt:12},michel:{fn:'Michel',ln:'',uid:'michel',role:'member',admin:false,pass:'michel',mustChange:true,photo:null,arrived:t,cp:25,rtt:12},catia:{fn:'Catia',ln:'',uid:'catia',role:'manager',admin:false,pass:'catia',mustChange:true,photo:null,arrived:t,cp:25,rtt:12}};
+      const b=writeBatch(db);
+      Object.entries(du).forEach(([uid,u])=>b.set(DR('users',uid),u));
+      await b.commit();
+    }
+    onSnapshot(C('users'),snap=>{snap.forEach(d=>DB_USERS[d.id]=d.data());if(CU)refresh()});
+    onSnapshot(C('demands'),snap=>{DB_DEMANDS={};snap.forEach(d=>DB_DEMANDS[d.id]=d.data());if(CU)refresh()});
+    hide('s-loading');show('s-login');
+  }catch(e){
+    document.getElementById('s-loading').innerHTML=`<div style="text-align:center;padding:2rem"><div style="font-size:16px;font-weight:600;color:#A32D2D;margin-bottom:8px">Erreur de connexion</div><div style="font-size:13px;color:#888;margin-bottom:16px">${e.message}</div><button class="btn btn-p" onclick="location.reload()">Réessayer</button></div>`;
+  }
+}
+
+function refresh(){
+  const u=DB_USERS[CU];if(!u)return;
+  renderTopbar();
+  if(u.admin&&document.getElementById('s-admin').classList.contains('active'))renderAdminList();
+  if((u.role==='manager'||u.admin)&&document.getElementById('s-manager').classList.contains('active'))renderPending();
+  if(document.getElementById('s-member').classList.contains('active'))refreshMemberDash();
+}
+
+async function doLogin(){
+  const uid=document.getElementById('li-u').value.trim().toLowerCase();
+  const pass=document.getElementById('li-p').value;
+  const err=document.getElementById('li-err');
+  const u=await FG('users',uid);
+  if(!u){showErr(err,'Identifiant inconnu');return}
+  if(u.pass!==pass){showErr(err,'Mot de passe incorrect');return}
+  err.classList.add('hidden');CU=uid;DB_USERS[uid]=u;
+  if(u.mustChange){hide('s-login');show('s-pwd');return}
+  enterApp();
+}
+
+async function savePwd(){
+  const p1=document.getElementById('np1').value,p2=document.getElementById('np2').value;
+  const err=document.getElementById('pwd-err');
+  if(p1.length<6){showErr(err,'Minimum 6 caractères');return}
+  if(p1!==p2){showErr(err,'Les mots de passe ne correspondent pas');return}
+  err.classList.add('hidden');
+  await FU('users',CU,{pass:p1,mustChange:false});
+  DB_USERS[CU].pass=p1;DB_USERS[CU].mustChange=false;
+  enterApp();
+}
+
+function enterApp(){
+  hide('s-pwd');hide('s-login');show('s-app');renderTopbar();
+  const u=DB_USERS[CU];
+  if(u.admin)loadAdmin();else if(u.role==='manager')loadManager();else loadMember();
+}
+
+function doLogout(){CU=null;hide('s-app');document.getElementById('li-p').value='';document.getElementById('li-u').value='';show('s-login')}
+
+function renderTopbar(){
+  const u=DB_USERS[CU];if(!u)return;
+  setAv(document.getElementById('tb-av'),u);
+  document.getElementById('tb-name').textContent=u.fn+(u.ln?' '+u.ln:'');
+  let h=`<span class="rbadge ${u.role==='manager'?'rmgr':'rm'}">${u.role==='manager'?'Manager':'Membre'}</span>`;
+  if(u.admin)h+=` <span class="rbadge radm">Admin</span>`;
+  document.getElementById('tb-roles').innerHTML=h;
+  // Nav buttons
+  let nav='';
+  nav+=`<button class="btn btn-sm" id="nav-member" onclick="switchTo('member')" style="font-size:11px">📅 Mon planning</button>`;
+  if(u.role==='manager'||u.admin) nav+=`<button class="btn btn-sm" id="nav-manager" onclick="switchTo('manager')" style="font-size:11px">👥 Manager</button>`;
+  if(u.admin) nav+=`<button class="btn btn-sm" id="nav-admin" onclick="switchTo('admin')" style="font-size:11px">⚙️ Admin</button>`;
+  document.getElementById('tb-nav').innerHTML=nav;
+}
+
+function switchTo(space){
+  if(space==='member') loadMember();
+  else if(space==='manager') loadManager();
+  else if(space==='admin') loadAdmin();
+  // Highlight active nav button
+  ['member','manager','admin'].forEach(s=>{
+    const btn=document.getElementById('nav-'+s);
+    if(btn) btn.style.background=s===space?'var(--pri)':'';
+    if(btn) btn.style.color=s===space?'#fff':'';
+    if(btn) btn.style.borderColor=s===space?'var(--pri)':'';
+  });
+}
+
+function loadMember(){hideAll();show('s-member');refreshMemberDash();highlightNav('member')}
+function mTab(el,id){
+  document.querySelectorAll('#s-member .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  ['mt-dash','mt-dem','mt-mes','mt-cal'].forEach(t=>document.getElementById(t).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='mt-dash')refreshMemberDash();if(id==='mt-mes')renderMyDemands();if(id==='mt-cal')renderCal('m');
+}
+
+function refreshMemberDash(){
+  const u=DB_USERS[CU];if(!u)return;
+  document.getElementById('m-cp').textContent=u.cp??25;
+  document.getElementById('m-rtt').textContent=u.rtt??12;
+  const now=new Date();
+  document.getElementById('m-tt').textContent=demandsArr().filter(d=>d.uid===CU&&d.type==='tt'&&d.status==='approuve'&&inMonth(d,now.getFullYear(),now.getMonth())).length;
+  renderMemberWeek();
+}
+
+function renderMemberWeek(){
+  const ws=weekStart(0),days=[],dn=['Lun','Mar','Mer','Jeu','Ven'],appr=demandsArr().filter(d=>d.status==='approuve');
+  for(let i=0;i<5;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);days.push(d)}
+  let h=`<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px">`;
+  days.forEach((d,i)=>{
+    const iso=toISO(d),hit=appr.find(dem=>dem.uid===CU&&iso>=dem.start&&iso<=dem.end);
+    let bg='#f8f9fc',lbl='Bureau',clr='#444';
+    if(hit){if(hit.type==='cp'){bg='var(--cp-bg)';lbl='CP';clr='#042C53'}else if(hit.type==='rtt'){bg='var(--rtt-bg)';lbl='RTT';clr='#04342C'}else{bg='var(--tt-bg)';lbl='Télétravail';clr='#26215C'}}
+    const ta=Object.keys(DB_USERS).filter(uid=>uid!==CU&&appr.find(dem=>dem.uid===uid&&iso>=dem.start&&iso<=dem.end)).length;
+    h+=`<div style="background:${bg};border-radius:10px;padding:10px;text-align:center;border:1px solid #eee"><div style="font-size:11px;color:#999">${dn[i]} ${d.getDate()}/${d.getMonth()+1}</div><div style="font-size:13px;font-weight:600;color:${clr};margin:5px 0">${lbl}</div><div style="font-size:10px;color:#aaa">${Object.keys(DB_USERS).length-ta} présents</div></div>`;
+  });
+  document.getElementById('m-week').innerHTML=h+'</div>';
+}
+
+async function submitDem(){
+  const type=document.getElementById('d-type').value,start=document.getElementById('d-s').value,end=document.getElementById('d-e').value,comment=document.getElementById('d-c').value;
+  const err=document.getElementById('d-err'),ok=document.getElementById('d-ok');
+  err.classList.add('hidden');ok.classList.add('hidden');
+  if(!start||!end){showErr(err,'Dates requises');return}
+  if(end<start){showErr(err,'La date de fin doit être après le début');return}
+  const days=bizDays(start,end),u=DB_USERS[CU];
+  if(type==='cp'&&(u.cp??25)<days){showErr(err,`Solde insuffisant (${u.cp??25}j CP)`);return}
+  if(type==='rtt'&&(u.rtt??12)<days){showErr(err,`Solde insuffisant (${u.rtt??12}j RTT)`);return}
+  const id='d_'+Date.now();
+  await FS('demands',id,{id,uid:CU,type,start,end,comment,status:'attente',days});
+  ok.classList.remove('hidden');ok.textContent='Demande envoyée avec succès';
+  document.getElementById('d-s').value='';document.getElementById('d-e').value='';document.getElementById('d-c').value='';
+}
+
+function renderMyDemands(){
+  const mine=demandsArr().filter(d=>d.uid===CU).sort((a,b)=>b.id>a.id?1:-1);
+  const el=document.getElementById('m-mydem');
+  el.innerHTML=mine.length?mine.map(d=>`<div class="drow"><div class="dinfo"><div class="dwho"><span class="badge b-${d.type}">${typeL(d.type)}</span></div><div class="ddet">${fmt(d.start)} → ${fmt(d.end)} · ${d.days}j${d.comment?' · '+d.comment:''}</div></div><span class="badge b-${d.status}">${statL(d.status)}</span></div>`).join(''):'<div class="empty">Aucune demande</div>';
+}
+
+function loadManager(){hideAll();show('s-manager');renderPending();highlightNav('manager')}
+function mgTab(el,id){
+  document.querySelectorAll('#s-manager .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  ['mg-dem','mg-wk','mg-cal','mg-team'].forEach(t=>document.getElementById(t).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='mg-dem')renderPending();if(id==='mg-wk')renderWeek();if(id==='mg-cal')renderCal('mg');if(id==='mg-team')renderTeam();
+}
+
+function renderPending(){
+  const pend=demandsArr().filter(d=>d.status==='attente').sort((a,b)=>a.id>b.id?1:-1);
+  const hist=demandsArr().filter(d=>d.status!=='attente').sort((a,b)=>b.id>a.id?1:-1).slice(0,30);
+  document.getElementById('pcnt').textContent=pend.length;
+  document.getElementById('mg-pend').innerHTML=pend.length?pend.map(d=>`<div class="drow"><div class="dinfo"><div class="dwho">${userName(d.uid)} — <span class="badge b-${d.type}">${typeL(d.type)}</span></div><div class="ddet">${fmt(d.start)} → ${fmt(d.end)} · ${d.days}j${d.comment?' · '+d.comment:''}</div></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-ok btn-sm" onclick="approveDem('${d.id}')">Valider</button><button class="btn btn-err btn-sm" onclick="rejectDem('${d.id}')">Refuser</button></div></div>`).join(''):'<div class="empty">Aucune demande en attente</div>';
+  document.getElementById('mg-hist').innerHTML=hist.length?hist.map(d=>`<div class="drow"><div class="dinfo"><div class="dwho">${userName(d.uid)} — <span class="badge b-${d.type}">${typeL(d.type)}</span></div><div class="ddet">${fmt(d.start)} → ${fmt(d.end)} · ${d.days}j</div></div><span class="badge b-${d.status}">${statL(d.status)}</span></div>`).join(''):'<div class="empty">Aucun historique</div>';
+}
+
+async function approveDem(id){
+  const d=DB_DEMANDS[id],u=DB_USERS[d.uid];if(!d||!u)return;
+  const b=writeBatch(db);
+  b.update(DR('demands',id),{status:'approuve'});
+  if(d.type==='cp')b.update(DR('users',d.uid),{cp:Math.max(0,(u.cp??25)-d.days)});
+  if(d.type==='rtt')b.update(DR('users',d.uid),{rtt:Math.max(0,(u.rtt??12)-d.days)});
+  await b.commit();
+}
+async function rejectDem(id){await FU('demands',id,{status:'refuse'})}
+
+function renderWeek(){
+  const ws=weekStart(wkOff),days=[],mos=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  for(let i=0;i<5;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);days.push(d)}
+  const we=new Date(ws);we.setDate(ws.getDate()+4);
+  document.getElementById('mg-wk-t').textContent=`Sem. du ${ws.getDate()} ${mos[ws.getMonth()]} au ${we.getDate()} ${mos[we.getMonth()]}`;
+  const appr=demandsArr().filter(d=>d.status==='approuve'),cols=`120px repeat(5,minmax(0,1fr))`;
+  let h=`<div style="display:grid;grid-template-columns:${cols};gap:1px;background:#eee;border-radius:10px;overflow:hidden"><div style="background:#f8f9fc;padding:8px"></div>`;
+  days.forEach((d,i)=>h+=`<div style="background:#f8f9fc;padding:8px;text-align:center;font-size:11px;font-weight:600">${['Lun','Mar','Mer','Jeu','Ven'][i]}<br><span style="font-weight:400;color:#999">${d.getDate()}/${d.getMonth()+1}</span></div>`);
+  h+='</div>';
+  Object.keys(DB_USERS).forEach(uid=>{
+    const u=DB_USERS[uid];
+    h+=`<div style="display:grid;grid-template-columns:${cols};gap:1px;background:#eee;margin-top:1px"><div style="background:#fff;padding:8px;display:flex;align-items:center;gap:6px"><div class="av av-s">${u.photo?`<img src="${u.photo}">`:initials(u)}</div><span style="font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${u.fn}</span></div>`;
+    days.forEach(d=>{const iso=toISO(d),hit=appr.find(dem=>dem.uid===uid&&iso>=dem.start&&iso<=dem.end);let cls='wkt-bureau',lbl='Bureau';if(hit){cls='wkt-'+hit.type;lbl=typeL(hit.type)}h+=`<div style="background:#fff;padding:8px;display:flex;align-items:center"><span class="wk-tag ${cls}">${lbl}</span></div>`});
+    h+='</div>';
+  });
+  document.getElementById('mg-week').innerHTML=h;
+}
+function wkMv(n){wkOff+=n;renderWeek()}
+
+function renderTeam(){
+  const el=document.getElementById('mg-team-list'),uids=Object.keys(DB_USERS);
+  el.innerHTML=uids.length?uids.map(uid=>{const u=DB_USERS[uid];return`<div class="drow" style="gap:12px"><div class="av av-m">${u.photo?`<img src="${u.photo}">`:initials(u)}</div><div class="dinfo"><div class="dwho">${u.fn}${u.ln?' '+u.ln:''}</div><div class="ddet">Arrivé le ${fmt(u.arrived)}</div></div><div style="display:flex;gap:14px;flex-shrink:0"><div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--cp)">${u.cp??25}</div><div style="font-size:10px;color:#aaa">CP</div></div><div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--rtt)">${u.rtt??12}</div><div style="font-size:10px;color:#aaa">RTT</div></div></div></div>`}).join(''):'<div class="empty">Aucun membre</div>';
+}
+
+function calMv(n,ctx){
+  if(ctx==='m'){calM+=n;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}renderCal('m')}
+  else{calMm+=n;if(calMm<0){calMm=11;calYm--}if(calMm>11){calMm=0;calYm++}renderCal('mg')}
+}
+function renderCal(ctx){
+  const y=ctx==='m'?calY:calYm,mo=ctx==='m'?calM:calMm;
+  const hId=ctx==='m'?'m-cal-h':'mg-cal-h',bId=ctx==='m'?'m-cal-b':'mg-cal-b',tId=ctx==='m'?'m-cal-t':'mg-cal-t';
+  const MN=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  document.getElementById(tId).textContent=`${MN[mo]} ${y}`;
+  document.getElementById(hId).innerHTML=['L','M','M','J','V','S','D'].map(d=>`<div class="cdh">${d}</div>`).join('');
+  const first=new Date(y,mo,1),last=new Date(y,mo+1,0),dow=(first.getDay()+6)%7,cells=[];
+  for(let i=0;i<dow;i++)cells.push({d:new Date(y,mo,1-dow+i),other:true});
+  for(let i=1;i<=last.getDate();i++)cells.push({d:new Date(y,mo,i),other:false});
+  while(cells.length%7)cells.push({d:new Date(y,mo+1,cells.length-last.getDate()-dow+1),other:true});
+  const today=new Date();today.setHours(0,0,0,0);
+  const appr=demandsArr().filter(d=>d.status==='approuve');
+  document.getElementById(bId).innerHTML=cells.map(c=>{
+    const iso=toISO(c.d),dw=c.d.getDay(),isT=c.d.getTime()===today.getTime();
+    let pills='';
+    if(!c.other&&dw!==0&&dw!==6){const hits=appr.filter(d=>iso>=d.start&&iso<=d.end);pills=hits.slice(0,4).map(d=>`<div class="cpill" style="background:${typeBg(d.type)};color:${typeFg(d.type)}">${initials(DB_USERS[d.uid]||{fn:'?'})}</div>`).join('');if(hits.length>4)pills+=`<div style="font-size:9px;color:#aaa">+${hits.length-4}</div>`}
+    return`<div class="cday${c.other?' other':''}${isT?' today':''}"><div class="cdn">${c.d.getDate()}</div>${pills}</div>`;
+  }).join('');
+}
+
+function loadAdmin(){hideAll();show('s-admin');renderAdminList();highlightNav('admin')}
+function highlightNav(space){
+  ['member','manager','admin'].forEach(s=>{
+    const btn=document.getElementById('nav-'+s);
+    if(!btn)return;
+    btn.style.background=s===space?'var(--pri)':'';
+    btn.style.color=s===space?'#fff':'';
+    btn.style.borderColor=s===space?'var(--pri)':'#dde0e8';
+  });
+}
+function adTab(el,id){
+  document.querySelectorAll('#s-admin .tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  ['ad-list','ad-add'].forEach(t=>document.getElementById(t).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='ad-list')renderAdminList();
+}
+function renderAdminList(){
+  const el=document.getElementById('ad-members'),uids=Object.keys(DB_USERS);
+  el.innerHTML=uids.length?uids.map(uid=>{
+    const u=DB_USERS[uid],isMe=uid===CU;
+    let b=`<span class="badge ${u.role==='manager'?'b-rtt':'b-cp'}">${u.role==='manager'?'Manager':'Membre'}</span>`;
+    if(u.admin)b+=` <span class="badge" style="background:var(--adm-bg);color:var(--adm)">Admin</span>`;
+    if(u.mustChange)b+=` <span class="badge b-attente">Mdp temporaire</span>`;
+    return`<div class="amc"><div class="av av-m">${u.photo?`<img src="${u.photo}">`:initials(u)}</div><div class="ami"><div style="font-weight:600;font-size:13px">${u.fn}${u.ln?' '+u.ln:''} <span style="font-size:11px;color:#aaa;font-weight:400">(${uid})</span></div><div class="ambg">${b}</div></div><div style="display:flex;gap:6px;flex-shrink:0"><button class="btn btn-sm" onclick="openEdit('${uid}')">Modifier</button>${isMe?'':`<button class="btn btn-err btn-xs" onclick="openDel('${uid}')">Supprimer</button>`}</div></div>`;
+  }).join(''):'<div class="empty">Aucun membre</div>';
+}
+
+async function addMember(){
+  const fn=document.getElementById('a-fn').value.trim(),ln=document.getElementById('a-ln').value.trim(),uid=document.getElementById('a-uid').value.trim().toLowerCase(),date=document.getElementById('a-date').value,role=document.getElementById('a-role').value;
+  const err=document.getElementById('a-err'),ok=document.getElementById('a-ok');
+  err.classList.add('hidden');ok.classList.add('hidden');
+  if(!fn||!uid){showErr(err,'Prénom et identifiant requis');return}
+  if(await FG('users',uid)){showErr(err,'Identifiant déjà utilisé');return}
+  await FS('users',uid,{fn,ln,uid,role,admin:false,pass:uid,mustChange:true,photo:null,arrived:date||toISO(new Date()),cp:25,rtt:12});
+  ok.classList.remove('hidden');ok.textContent=`Compte créé. Mot de passe temporaire : ${uid}`;
+  document.getElementById('a-fn').value='';document.getElementById('a-ln').value='';document.getElementById('a-uid').value='';
+}
+
+function openEdit(uid){
+  const u=DB_USERS[uid];editPhotoData=null;
+  document.getElementById('e-uid').value=uid;document.getElementById('e-fn').value=u.fn;document.getElementById('e-ln').value=u.ln||'';document.getElementById('e-date').value=u.arrived||'';document.getElementById('e-role').value=u.role;document.getElementById('e-cp').value=u.cp??25;document.getElementById('e-rtt').value=u.rtt??12;document.getElementById('e-role').disabled=(uid===CU);
+  document.getElementById('e-av').innerHTML=u.photo?`<img src="${u.photo}">`:initials(u);
+  document.getElementById('e-photo').value='';document.getElementById('m-edit').classList.remove('hidden');
+}
+function previewPhoto(input){
+  if(!input.files||!input.files[0])return;
+  const r=new FileReader();r.onload=e=>{editPhotoData=e.target.result;document.getElementById('e-av').innerHTML=`<img src="${editPhotoData}">`};r.readAsDataURL(input.files[0]);
+}
+async function saveEdit(){
+  const uid=document.getElementById('e-uid').value,u=DB_USERS[uid];
+  const up={fn:document.getElementById('e-fn').value.trim()||u.fn,ln:document.getElementById('e-ln').value.trim(),arrived:document.getElementById('e-date').value||u.arrived,cp:parseInt(document.getElementById('e-cp').value)||u.cp,rtt:parseInt(document.getElementById('e-rtt').value)||u.rtt};
+  if(uid!==CU)up.role=document.getElementById('e-role').value;
+  if(editPhotoData)up.photo=editPhotoData;
+  await FU('users',uid,up);closeEdit();renderTopbar();
+}
+async function resetPwd(){const uid=document.getElementById('e-uid').value;await FU('users',uid,{pass:uid,mustChange:true});closeEdit();alert(`Mot de passe réinitialisé : ${uid}`)}
+function closeEdit(e){if(e&&!e.target.classList.contains('moverlay'))return;document.getElementById('m-edit').classList.add('hidden')}
+function openDel(uid){delTarget=uid;document.getElementById('del-name').textContent=DB_USERS[uid].fn+(DB_USERS[uid].ln?' '+DB_USERS[uid].ln:'');document.getElementById('m-del').classList.remove('hidden')}
+async function confirmDel(){
+  if(!delTarget)return;
+  const b=writeBatch(db);b.delete(DR('users',delTarget));
+  Object.keys(DB_DEMANDS).filter(k=>DB_DEMANDS[k].uid===delTarget).forEach(k=>b.delete(DR('demands',k)));
+  await b.commit();delTarget=null;closeDel();
+}
+function closeDel(e){if(e&&!e.target.classList.contains('moverlay'))return;document.getElementById('m-del').classList.add('hidden')}
+
+function demandsArr(){return Object.values(DB_DEMANDS||{})}
+function initials(u){return((u.fn||'?')[0]+((u.ln||u.fn||'?')[u.ln?0:1]||'?')).toUpperCase()}
+function userName(uid){const u=DB_USERS[uid];return u?u.fn+(u.ln?' '+u.ln:''):'?'}
+function toISO(d){return d.toISOString().split('T')[0]}
+function fmt(s){if(!s)return'–';const[y,mo,dd]=s.split('-');return`${dd}/${mo}/${y}`}
+function typeL(t){return t==='cp'?'Congé payé':t==='rtt'?'RTT':'Télétravail'}
+function statL(s){return s==='attente'?'En attente':s==='approuve'?'Approuvé':'Refusé'}
+function typeBg(t){return t==='cp'?'var(--cp-bg)':t==='rtt'?'var(--rtt-bg)':'var(--tt-bg)'}
+function typeFg(t){return t==='cp'?'#042C53':t==='rtt'?'#04342C':'#26215C'}
+function bizDays(s,e){let c=0,d=new Date(s);const en=new Date(e);while(d<=en){const dw=d.getDay();if(dw!==0&&dw!==6)c++;d.setDate(d.getDate()+1)}return c}
+function inMonth(dem,y,mo){const s=new Date(dem.start),e=new Date(dem.end),ms=new Date(y,mo,1),me=new Date(y,mo+1,0);return s<=me&&e>=ms}
+function weekStart(off){const n=new Date(),dow=(n.getDay()+6)%7,mo=new Date(n);mo.setDate(n.getDate()-dow+off*7);mo.setHours(0,0,0,0);return mo}
+function showErr(el,msg){el.classList.remove('hidden');el.textContent=msg}
+function setAv(el,u){el.innerHTML=u&&u.photo?`<img src="${u.photo}">`:initials(u||{fn:'?'})}
+function show(id){document.getElementById(id).classList.add('active')}
+function hide(id){document.getElementById(id).classList.remove('active')}
+function hideAll(){['s-member','s-manager','s-admin'].forEach(id=>document.getElementById(id).classList.remove('active'))}
+
+const td=new Date(),td2=new Date();td2.setDate(td.getDate()+2);
+document.getElementById('d-s').value=toISO(td);document.getElementById('d-e').value=toISO(td2);document.getElementById('a-date').value=toISO(td);
+
+window.doLogin=doLogin;window.savePwd=savePwd;window.doLogout=doLogout;window.switchTo=switchTo;
+window.mTab=mTab;window.mgTab=mgTab;window.adTab=adTab;
+window.submitDem=submitDem;window.renderMyDemands=renderMyDemands;
+window.approveDem=approveDem;window.rejectDem=rejectDem;
+window.wkMv=wkMv;window.calMv=calMv;
+window.openEdit=openEdit;window.saveEdit=saveEdit;window.closeEdit=closeEdit;
+window.previewPhoto=previewPhoto;window.resetPwd=resetPwd;
+window.openDel=openDel;window.confirmDel=confirmDel;window.closeDel=closeDel;
+window.addMember=addMember;
+
+initData();
+</script>
+</body>
+</html>
