@@ -6,91 +6,106 @@
 <title>LactaFlow — Planning équipe</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--warn:#BA7517;--warn-bg:#FAEEDA;--ok:#3B6D11;--ok-bg:#EAF3DE;--err:#A32D2D;--err-bg:#FCEBEB;--adm:#854F0B;--adm-bg:#FAC775;--radius:10px;--radius-lg:14px}
+:root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--warn:#BA7517;--warn-bg:#FAEEDA;--ok:#3B6D11;--ok-bg:#EAF3DE;--err:#A32D2D;--err-bg:#FCEBEB;--radius:10px;--radius-lg:14px}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:14px;min-height:100vh}
 
-/* LOGIQUE D'AFFICHAGE RENFORCÉE */
+/* --- LOGIQUE DE VISIBILITÉ --- */
 .screen { display: none !important; }
 .screen.active { display: block !important; }
-
-/* Loader opaque qui couvre tout */
-#s-loading {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: #f0f2f5;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 12px;
-}
+#s-loading { display: none; position: fixed; inset: 0; z-index: 9999; background: #f0f2f5; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
 #s-loading.active { display: flex !important; }
 
-input,select{width:100%;padding:9px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;color:#1a1a1a;font-size:13px;font-family:inherit}
-button{font-family:inherit;cursor:pointer}
-.btn{padding:8px 16px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;color:#1a1a1a;font-size:13px}
+/* --- STYLE APP --- */
+input,select{width:100%;padding:9px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff}
+.btn{padding:8px 16px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer}
 .btn-p{background:var(--pri);color:#fff;border-color:var(--pri)}
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.login-bg{position:absolute;inset:0;background-size:cover;background-position:center}
-.login-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.38)}
-.login-card{position:relative;z-index:2;background:rgba(255,255,255,0.93);backdrop-filter:blur(8px);border-radius:20px;padding:2.2rem;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.18)}
-.login-hdr{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:1.8rem;text-align:center}
-.login-logo{height:46px;width:auto}
-.field{margin-bottom:13px}
-.field label{display:block;font-size:12px;color:#555;margin-bottom:5px;font-weight:500}
-.emsg{font-size:12px;margin-top:5px;padding:7px 10px;border-radius:8px}.emsg.err{background:var(--err-bg);color:#791F1F}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100}
-.page{max-width:900px;margin:0 auto;padding:20px 16px}
-.card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.1rem 1.3rem;margin-bottom:14px}
+.page{max-width:1000px;margin:0 auto;padding:20px 16px}
+.card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.1rem;margin-bottom:14px}
 .tabs{display:flex;gap:3px;padding:4px;background:#f0f2f5;border-radius:var(--radius-lg);margin-bottom:16px}
 .tab{flex:1;padding:8px;border:none;background:transparent;border-radius:var(--radius);font-size:12px;cursor:pointer;color:#666}
 .tab.active{background:#fff;color:#1a1a1a;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-.hidden{display:none !important}
+
+/* --- CALENDRIER ÉVOLUÉ --- */
+.cal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.cg7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cday-name { text-align: center; font-size: 11px; font-weight: 600; color: #888; padding-bottom: 5px; }
+.cday { min-height: 85px; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 4px; position: relative; }
+.cday.off { background: #f9f9f9; color: #ccc; }
+.cday-num { font-weight: 700; font-size: 12px; margin-bottom: 4px; display: block; }
+
+/* Pastilles de statut */
+.pill { font-size: 10px; padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.pill-cp { background: var(--cp-bg); color: var(--cp); border-left: 3px solid var(--cp); }
+.pill-rtt { background: var(--rtt-bg); color: var(--rtt); border-left: 3px solid var(--rtt); }
+.pill-tt { background: var(--tt-bg); color: var(--tt); border-left: 3px solid var(--tt); }
+.pill-office { background: #f0f0f0; color: #444; border-left: 3px solid #888; }
+
+.hidden { display: none !important; }
 .spinner{width:32px;height:32px;border:3px solid #e0e3ea;border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<div id="s-loading" class="active">
-    <div class="spinner"></div>
-    <div style="color: #666; font-weight: 500;">Chargement de LactaFlow...</div>
-</div>
+<div id="s-loading" class="active"><div class="spinner"></div></div>
 
 <div class="screen" id="s-login">
-  <div class="login-screen">
-    <div class="login-bg" id="login-bg"></div>
-    <div class="login-overlay"></div>
-    <div class="login-card">
-      <div class="login-hdr">
-        <img class="login-logo" src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" alt="Lactalis">
-        <div style="font-size:17px;font-weight:600;color:var(--pri)">LactaFlow</div>
-      </div>
-      <div class="field"><label>Identifiant</label><input type="text" id="li-u" placeholder="prenom"></div>
-      <div class="field"><label>Mot de passe</label><input type="password" id="li-p" placeholder="••••••••"></div>
-      <div id="li-err" class="emsg err hidden"></div>
-      <button class="btn btn-p" style="width:100%;margin-top:10px;padding:10px" onclick="doLogin()">Se connecter</button>
+    <div style="display:flex; height:100vh; align-items:center; justify-content:center; background:#f0f2f5">
+        <div class="card" style="width:320px; text-align:center">
+            <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="40" style="margin-bottom:20px">
+            <input type="text" id="li-u" placeholder="Identifiant" style="margin-bottom:10px">
+            <input type="password" id="li-p" placeholder="Mot de passe" style="margin-bottom:15px">
+            <button class="btn btn-p" style="width:100%" onclick="doLogin()">Connexion</button>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="screen" id="s-app">
-  <div class="topbar">
-    <div style="font-weight:700; color:var(--pri)">LactaFlow</div>
-    <button class="btn btn-sm" onclick="doLogout()">Déconnexion</button>
-  </div>
-  <div class="page">
-    <div class="card">
-        <h3>Bienvenue sur votre espace planning</h3>
-        <p style="margin-top:10px; color:#666">Données synchronisées avec succès.</p>
+    <div class="topbar">
+        <div style="font-weight:700; color:var(--pri)">LactaFlow</div>
+        <div id="tb-nav" style="display:flex; gap:10px"></div>
+        <button class="btn" onclick="location.reload()">Quitter</button>
     </div>
-  </div>
+
+    <div class="page">
+        <div class="tabs">
+            <button class="tab active" onclick="mTab(this,'mt-dash')">Tableau de bord</button>
+            <button class="tab" onclick="mTab(this,'mt-cal')">Planning Équipe</button>
+            <button class="tab" onclick="mTab(this,'mt-dem')">Poser une absence</button>
+        </div>
+
+        <div id="mt-dash">
+            <div class="card"><h3>Bonjour <span id="user-name"></span></h3></div>
+        </div>
+
+        <div id="mt-cal" class="hidden">
+            <div class="card">
+                <div class="cal-hdr">
+                    <button class="btn" onclick="changeMonth(-1)">◀</button>
+                    <h2 id="cal-month-title">Mars 2026</h2>
+                    <button class="btn" onclick="changeMonth(1)">▶</button>
+                </div>
+                <div class="cg7" id="cal-grid"></div>
+            </div>
+        </div>
+
+        <div id="mt-dem" class="hidden">
+            <div class="card">
+                <div style="margin-bottom:10px"><label>Type d'absence</label>
+                <select id="d-type"><option value="cp">Congés Payés</option><option value="rtt">RTT</option><option value="tt">Télétravail</option></select></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
+                    <input type="date" id="d-s"> <input type="date" id="d-e">
+                </div>
+                <button class="btn btn-p" onclick="submitDem()">Envoyer la demande</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCw6EmX6iJQSi5OucFxi9d6wuHx1Gxlj3w",
@@ -106,84 +121,124 @@ const db = getFirestore(app);
 
 let CU = null;
 let DB_USERS = {};
-let DB_DEMANDS = {};
+let DB_DEMANDS = [];
+let currentMonth = new Date();
 
-// --- FONCTIONS DE VISIBILITÉ ---
+// --- VISIBILITÉ ---
 function forceKillLoading() {
-    console.log("Action : Suppression du loader du DOM");
-    const loader = document.getElementById('s-loading');
-    if (loader) {
-        loader.classList.remove('active');
-        loader.style.setProperty('display', 'none', 'important');
-        // Sécurité ultime : on retire l'élément après une petite transition
-        setTimeout(() => { if(loader) loader.remove(); }, 400);
-    }
+    const l = document.getElementById('s-loading');
+    if(l) { l.classList.remove('active'); setTimeout(()=>l.remove(), 400); }
 }
 
-function show(id) {
-    const el = document.getElementById(id);
-    if(el) el.classList.add('active');
-}
-
-// --- INITIALISATION ---
 async function initData() {
-    console.log("Démarrage de l'initialisation...");
-    try {
-        // Test de connexion Firebase
-        const snapUsers = await getDocs(collection(db, 'users'));
-        console.log("Connexion Firebase OK, utilisateurs trouvés :", snapUsers.size);
+    onSnapshot(collection(db, 'users'), s => {
+        s.forEach(d => DB_USERS[d.id] = {id: d.id, ...d.data()});
+        if(CU) renderCalendar();
+    });
+    onSnapshot(collection(db, 'demands'), s => {
+        DB_DEMANDS = [];
+        s.forEach(d => DB_DEMANDS.push({id: d.id, ...d.data()}));
+        if(CU) renderCalendar();
+    });
+    forceKillLoading();
+    document.getElementById('s-login').classList.add('active');
+}
 
-        if (snapUsers.empty) {
-            console.log("Base vide, création des comptes par défaut...");
-            // ... (logique de batch ici si besoin)
-        }
+// --- CALENDRIER ÉQUIPE ---
+function renderCalendar() {
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    
+    document.getElementById('cal-month-title').textContent = new Intl.DateTimeFormat('fr-FR', {month:'long', year:'numeric'}).format(currentMonth);
 
-        // Snapshot temps réel
-        onSnapshot(collection(db, 'users'), (s) => {
-            s.forEach(d => DB_USERS[d.id] = d.data());
-            console.log("Mise à jour Users");
+    // En-têtes jours
+    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => {
+        grid.innerHTML += `<div class="cday-name">${d}</div>`;
+    });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Cases vides début
+    for(let i=0; i<startOffset; i++) grid.innerHTML += `<div class="cday off"></div>`;
+
+    // Jours du mois
+    for(let day=1; day<=daysInMonth; day++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        let html = `<div class="cday"><span class="cday-num">${day}</span>`;
+        
+        // On cherche qui est absent ou en TT ce jour-là
+        Object.values(DB_USERS).forEach(user => {
+            // 1. Chercher une demande validée
+            const activeDem = DB_DEMANDS.find(d => 
+                d.uid === user.id && 
+                d.status === 'approved' && 
+                dateStr >= d.start && dateStr <= d.end
+            );
+
+            if(activeDem) {
+                html += `<span class="pill pill-${activeDem.type}">${user.fn} (${activeDem.type.toUpperCase()})</span>`;
+            } else {
+                // Par défaut, si jour ouvré, on peut afficher "Bureau" ou rien
+                // html += `<span class="pill pill-office">${user.fn}</span>`;
+            }
         });
 
-        // TOUT EST PRÊT
-        console.log("Initialisation terminée avec succès.");
-        forceKillLoading();
-        show('s-login');
-
-    } catch (error) {
-        console.error("ERREUR CRITIQUE :", error);
-        // Si ça crash, on force quand même le retrait du loader pour voir l'erreur
-        forceKillLoading();
-        alert("Impossible de charger les données. Vérifiez votre connexion.");
+        html += `</div>`;
+        grid.innerHTML += html;
     }
 }
 
+function changeMonth(dir) {
+    currentMonth.setMonth(currentMonth.getMonth() + dir);
+    renderCalendar();
+}
+
+// --- ACTIONS ---
 async function doLogin() {
-    const uid = document.getElementById('li-u').value.trim().toLowerCase();
-    const pass = document.getElementById('li-p').value;
-    const err = document.getElementById('li-err');
-    
-    try {
-        const userDoc = await getDoc(doc(db, 'users', uid));
-        if (userDoc.exists() && userDoc.data().pass === pass) {
-            CU = uid;
-            document.getElementById('s-login').classList.remove('active');
-            show('s-app');
-        } else {
-            err.textContent = "Identifiants incorrects";
-            err.classList.remove('hidden');
-        }
-    } catch (e) {
-        console.error(e);
+    const u = document.getElementById('li-u').value.toLowerCase();
+    const p = document.getElementById('li-p').value;
+    if(DB_USERS[u] && DB_USERS[u].pass === p) {
+        CU = u;
+        document.getElementById('user-name').textContent = DB_USERS[u].fn;
+        document.getElementById('s-login').classList.remove('active');
+        document.getElementById('s-app').classList.add('active');
+        renderCalendar();
     }
 }
 
-function doLogout() {
-    location.reload();
+async function submitDem() {
+    const type = document.getElementById('d-type').value;
+    const start = document.getElementById('d-s').value;
+    const end = document.getElementById('d-e').value;
+    
+    if(!start || !end) return alert("Dates manquantes");
+
+    await setDoc(doc(collection(db, 'demands')), {
+        uid: CU,
+        type: type,
+        start: start,
+        end: end,
+        status: 'pending', // Attend validation manager pour apparaître au planning
+        created: new Date().toISOString()
+    });
+    alert("Demande envoyée ! Elle apparaîtra au planning après validation.");
 }
 
-// Lancement
+function mTab(btn, id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    ['mt-dash', 'mt-cal', 'mt-dem'].forEach(div => document.getElementById(div).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+}
+
 window.doLogin = doLogin;
-window.doLogout = doLogout;
+window.submitDem = submitDem;
+window.mTab = mTab;
+window.changeMonth = changeMonth;
 
 initData();
 </script>
