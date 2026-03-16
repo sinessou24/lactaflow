@@ -6,7 +6,7 @@
 <title>LactaFlow — Admin RH & Planning</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--radius:10px;--radius-lg:14px;--err:#A32D2D;--err-bg:#FCEBEB}
+:root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--radius:10px;--radius-lg:14px;--err:#A32D2D;--err-bg:#FCEBEB;--ok:#3B6D11;--ok-bg:#EAF3DE}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:14px;min-height:100vh}
 
 .screen { display: none !important; }
@@ -21,7 +21,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .login-card{position:relative;z-index:2;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:20px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 10px 50px rgba(0,0,0,0.3);text-align:center}
 
 /* UI */
-input,select{width:100%;padding:9px;border:1px solid #dde0e8;border-radius:var(--radius);margin-bottom:10px}
+input,select{width:100%;padding:8px;border:1px solid #dde0e8;border-radius:var(--radius);margin-bottom:10px}
 .btn{padding:8px 14px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:600;font-size:12px}
 .btn-p{background:var(--pri);color:#fff;border-color:var(--pri)}
 .btn-del{background:var(--err-bg);color:var(--err);border-color:var(--err)}
@@ -33,21 +33,18 @@ input,select{width:100%;padding:9px;border:1px solid #dde0e8;border-radius:var(-
 .tab{flex:1;border:none;padding:10px;border-radius:9px;cursor:pointer;font-weight:600;color:#666}
 .tab.active{background:#fff;color:var(--pri);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
 
-/* PLANNING */
-.cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-.cg7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.cday{min-height:85px;background:#fff;border:1px solid #eee;border-radius:8px;padding:5px}
-.pill{font-size:10px;padding:2px 5px;border-radius:4px;margin-bottom:2px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pill-cp{background:var(--cp-bg);color:var(--cp);border-left:3px solid var(--cp)}
-.pill-rtt{background:var(--rtt-bg);color:var(--rtt);border-left:3px solid var(--rtt)}
-.pill-tt{background:var(--tt-bg);color:var(--tt);border-left:3px solid var(--tt)}
-
 /* TABLES */
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:11px;color:#888;padding:10px;text-transform:uppercase}
 td{padding:10px;border-bottom:1px solid #eee}
+.in-small{width:50px; text-align:center; padding:4px; margin:0}
 
-.hidden{display:none !important}
+/* STATUS PILLS */
+.st-p{padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase}
+.st-approved{background:var(--ok-bg); color:var(--ok)}
+.st-rejected{background:var(--err-bg); color:var(--err)}
+.st-pending{background:var(--warn-bg); color:var(--warn)}
+
 .spinner{width:32px;height:32px;border:3px solid #e0e3ea;border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -57,9 +54,7 @@ td{padding:10px;border-bottom:1px solid #eee}
 <div id="s-loading" class="active"><div class="spinner"></div></div>
 
 <div class="screen" id="s-login">
-  <div class="login-screen">
-    <div class="login-bg"></div>
-    <div class="login-overlay"></div>
+  <div class="login-screen"><div class="login-bg"></div><div class="login-overlay"></div>
     <div class="login-card">
       <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="40" style="margin-bottom:20px">
       <input type="text" id="li-u" placeholder="Identifiant">
@@ -71,10 +66,7 @@ td{padding:10px;border-bottom:1px solid #eee}
 
 <div class="screen" id="s-app">
   <div class="topbar">
-    <div style="display:flex; gap:10px; align-items:center">
-        <strong style="color:var(--pri)">LactaFlow</strong>
-        <div id="tb-nav" style="display:flex; gap:5px"></div>
-    </div>
+    <div style="display:flex; gap:10px; align-items:center"><strong style="color:var(--pri)">LactaFlow</strong><div id="tb-nav" style="display:flex; gap:5px"></div></div>
     <button class="btn" onclick="location.reload()">Quitter</button>
   </div>
 
@@ -82,8 +74,8 @@ td{padding:10px;border-bottom:1px solid #eee}
     <div id="sec-member" class="space-section active">
         <div class="tabs">
             <button class="tab active" onclick="mTab(this,'mt-dash')">Tableau de bord</button>
-            <button class="tab" onclick="mTab(this,'mt-cal')">Planning Équipe</button>
-            <button class="tab" onclick="mTab(this,'mt-dem')">Poser une absence</button>
+            <button class="tab" onclick="mTab(this,'mt-cal')">Planning</button>
+            <button class="tab" onclick="mTab(this,'mt-dem')">Demande</button>
         </div>
         <div id="mt-dash">
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:15px">
@@ -91,26 +83,14 @@ td{padding:10px;border-bottom:1px solid #eee}
                 <div class="card" style="text-align:center"><small>RTT</small><h2 id="m-rtt" style="color:var(--rtt)">-</h2></div>
                 <div class="card" style="text-align:center"><small>TT</small><h2 id="m-tt" style="color:var(--tt)">-</h2></div>
             </div>
-            <div class="card"><h3>Mes dernières demandes</h3><div id="m-list" style="margin-top:10px"></div></div>
+            <div class="card"><h3>Mes demandes</h3><div id="m-list" style="margin-top:10px"></div></div>
         </div>
-        <div id="mt-cal" class="hidden">
-            <div class="card">
-                <div class="cal-hdr">
-                    <button class="btn" onclick="changeMonth(-1)">◀</button>
-                    <h3 id="cal-month-title" style="text-transform:capitalize"></h3>
-                    <button class="btn" onclick="changeMonth(1)">▶</button>
-                </div>
-                <div class="cg7" id="cal-grid"></div>
-            </div>
-        </div>
+        <div id="mt-cal" class="hidden"><div class="card"><div id="cal-grid"></div></div></div>
         <div id="mt-dem" class="hidden">
             <div class="card">
                 <h3>Nouvelle absence</h3>
-                <label>Type</label>
-                <select id="d-type"><option value="cp">Congés Payés</option><option value="rtt">RTT</option><option value="tt">Télétravail</option></select>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
-                    <input type="date" id="d-s"> <input type="date" id="d-e">
-                </div>
+                <select id="d-type"><option value="cp">CP</option><option value="rtt">RTT</option><option value="tt">TT</option></select>
+                <input type="date" id="d-s"> <input type="date" id="d-e">
                 <button class="btn btn-p" style="width:100%" onclick="submitDem()">Envoyer</button>
             </div>
         </div>
@@ -119,32 +99,28 @@ td{padding:10px;border-bottom:1px solid #eee}
     <div id="sec-admin" class="space-section hidden">
         <div class="tabs">
             <button class="tab active" onclick="aTab(this,'at-users')">Équipe</button>
-            <button class="tab" onclick="aTab(this,'at-val')">Validations</button>
+            <button class="tab" onclick="aTab(this,'at-val')">Validations & Historique</button>
         </div>
-
         <div id="at-users">
-            <div class="card">
-                <h4>Ajouter un membre</h4>
+            <div class="card" id="admin-only-form">
+                <h4>Nouveau membre</h4>
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:10px">
-                    <input type="text" id="new-id" placeholder="ID (ex: paul.d)">
-                    <input type="text" id="new-fn" placeholder="Prénom Nom">
-                    <input type="text" id="new-pw" placeholder="Mot de passe">
+                    <input type="text" id="new-id" placeholder="ID">
+                    <input type="text" id="new-fn" placeholder="Nom">
+                    <input type="text" id="new-pw" placeholder="Pass">
                 </div>
-                <button class="btn btn-p" onclick="addUser()">Créer le compte</button>
+                <button class="btn btn-p" onclick="addUser()">Créer</button>
             </div>
             <div class="card">
                 <table>
-                    <thead><tr><th>Membre</th><th>CP / RTT / TT</th><th>Rôles</th><th>Action</th></tr></thead>
+                    <thead><tr><th>Membre</th><th>CP / RTT / TT</th><th class="col-roles">Rôles</th><th>Actions</th></tr></thead>
                     <tbody id="admin-list"></tbody>
                 </table>
             </div>
         </div>
-
         <div id="at-val" class="hidden">
-            <div class="card">
-                <h3>Demandes en attente</h3>
-                <div id="val-list" style="margin-top:15px"></div>
-            </div>
+            <div class="card"><h4>En attente</h4><div id="val-pending" style="margin-top:10px"></div></div>
+            <div class="card"><h4>Historique des décisions</h4><div id="val-history" style="margin-top:10px"></div></div>
         </div>
     </div>
   </div>
@@ -165,16 +141,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-let CU = null;
-let DB_USERS = {};
-let DB_DEMANDS = [];
-let currentMonth = new Date();
-
-function forceKillLoading() {
-    const l = document.getElementById('s-loading');
-    if(l) { l.classList.remove('active'); setTimeout(()=>l.remove(), 400); }
-}
+let CU = null, DB_USERS = {}, DB_DEMANDS = [];
 
 async function initData() {
     onSnapshot(collection(db, 'users'), s => {
@@ -186,7 +153,7 @@ async function initData() {
         s.forEach(d => DB_DEMANDS.push({id: d.id, ...d.data()}));
         if(CU) refreshUI();
     });
-    forceKillLoading();
+    document.getElementById('s-loading').classList.remove('active');
     document.getElementById('s-login').classList.add('active');
 }
 
@@ -198,138 +165,108 @@ async function doLogin() {
         document.getElementById('s-login').classList.remove('active');
         document.getElementById('s-app').classList.add('active');
         refreshUI();
-    } else { alert("Identifiant ou mot de passe incorrect"); }
+    } else alert("Erreur identifiants");
 }
 
 function refreshUI() {
     const u = DB_USERS[CU.toLowerCase()];
-    if(!u) return;
-    
     document.getElementById('m-cp').textContent = u.cp || 0;
     document.getElementById('m-rtt').textContent = u.rtt || 0;
     document.getElementById('m-tt').textContent = u.tt || 0;
-
+    
     const nav = document.getElementById('tb-nav');
     nav.innerHTML = `<button class="btn" onclick="switchSpace('member')">Mon Espace</button>`;
     if(u.admin || u.manager) {
         nav.innerHTML += `<button class="btn btn-p" onclick="switchSpace('admin')">Manager</button>`;
         renderAdmin();
     }
-    renderCalendar();
     renderMyDemands();
 }
 
-// --- ADMIN / MANAGER LOGIC ---
-async function addUser() {
-    const id = document.getElementById('new-id').value.trim().toLowerCase();
-    const fn = document.getElementById('new-fn').value;
-    const pass = document.getElementById('new-pw').value;
-    if(!id || !fn || !pass) return alert("Champs vides");
-    await setDoc(doc(db, 'users', id), { fn, pass, cp:25, rtt:10, tt:2, manager:false, admin:false });
-    alert("Membre ajouté !");
-}
-
-async function deleteUser(id) {
-    if(confirm("Supprimer ce membre ?")) await deleteDoc(doc(db, 'users', id));
-}
-
-async function updateRole(id, role, val) {
-    const up = {}; up[role] = val;
-    await updateDoc(doc(db, 'users', id), up);
+// --- ADMIN / MANAGER ---
+async function saveCounters(id) {
+    const cp = parseInt(document.getElementById(`in-cp-${id}`).value);
+    const rtt = parseInt(document.getElementById(`in-rtt-${id}`).value);
+    const tt = parseInt(document.getElementById(`in-tt-${id}`).value);
+    await updateDoc(doc(db, 'users', id), { cp, rtt, tt });
+    alert("Compteurs mis à jour !");
 }
 
 function renderAdmin() {
+    const uCur = DB_USERS[CU.toLowerCase()];
     const list = document.getElementById('admin-list');
     list.innerHTML = '';
+    
+    // Restriction Formulaire Ajout
+    document.getElementById('admin-only-form').style.display = uCur.id === 'igor' ? 'block' : 'none';
+
     Object.values(DB_USERS).forEach(u => {
         const tr = document.createElement('tr');
+        const isIgor = uCur.id === 'igor';
         tr.innerHTML = `
-            <td><strong>${u.fn}</strong><br><small>${u.id}</small></td>
-            <td>${u.cp}/${u.rtt}/${u.tt}</td>
+            <td><strong>${u.fn}</strong></td>
             <td>
-                <label><input type="checkbox" ${u.manager?'checked':''} onchange="updateRole('${u.id}','manager',this.checked)"> Manag.</label><br>
-                <label><input type="checkbox" ${u.admin?'checked':''} onchange="updateRole('${u.id}','admin',this.checked)"> Admin</label>
+                <input type="number" id="in-cp-${u.id}" class="in-small" value="${u.cp||0}">
+                <input type="number" id="in-rtt-${u.id}" class="in-small" value="${u.rtt||0}">
+                <input type="number" id="in-tt-${u.id}" class="in-small" value="${u.tt||0}">
             </td>
-            <td><button class="btn btn-del" onclick="deleteUser('${u.id}')">X</button></td>
+            <td class="col-roles" style="${isIgor?'':'display:none'}">
+                <input type="checkbox" ${u.manager?'checked':''} onchange="updateRole('${u.id}','manager',this.checked)"> M
+                <input type="checkbox" ${u.admin?'checked':''} onchange="updateRole('${u.id}','admin',this.checked)"> A
+            </td>
+            <td>
+                <button class="btn" onclick="saveCounters('${u.id}')">💾</button>
+                ${isIgor ? `<button class="btn btn-del" onclick="deleteUser('${u.id}')">X</button>` : ''}
+            </td>
         `;
         list.appendChild(tr);
     });
 
-    const vList = document.getElementById('val-list');
-    vList.innerHTML = '';
-    DB_DEMANDS.filter(d => d.status === 'pending').forEach(d => {
-        const u = DB_USERS[d.uid.toLowerCase()];
-        vList.innerHTML += `
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--warn)">
-                <div><strong>${u?u.fn:d.uid}</strong> - ${d.type.toUpperCase()}<br><small>Du ${d.start} au ${d.end}</small></div>
-                <div style="display:flex; gap:5px">
-                    <button class="btn btn-p" onclick="decide('${d.id}','approved')">Valider</button>
-                    <button class="btn btn-del" onclick="decide('${d.id}','rejected')">Refuser</button>
-                </div>
-            </div>`;
+    // Validations & Historique
+    const pList = document.getElementById('val-pending'), hList = document.getElementById('val-history');
+    pList.innerHTML = ''; hList.innerHTML = '';
+    
+    DB_DEMANDS.forEach(d => {
+        const user = DB_USERS[d.uid.toLowerCase()];
+        const html = `<div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px">
+            <div><strong>${user?user.fn:d.uid}</strong> - ${d.type.toUpperCase()}<br><small>${d.start} au ${d.end}</small></div>
+            ${d.status === 'pending' ? 
+                `<div><button class="btn btn-p" onclick="decide('${d.id}','approved')">V</button> <button class="btn btn-del" onclick="decide('${d.id}','rejected')">X</button></div>` :
+                `<span class="st-p st-${d.status}">${d.status}</span>`}
+        </div>`;
+        if(d.status === 'pending') pList.innerHTML += html; else hList.innerHTML += html;
     });
 }
 
-async function decide(id, status) {
-    await updateDoc(doc(db, 'demands', id), { status });
+async function decide(id, status) { await updateDoc(doc(db, 'demands', id), { status }); }
+async function updateRole(id, role, val) { const up = {}; up[role] = val; await updateDoc(doc(db, 'users', id), up); }
+async function addUser() {
+    const id = document.getElementById('new-id').value.trim().toLowerCase();
+    const fn = document.getElementById('new-fn').value, pass = document.getElementById('new-pw').value;
+    await setDoc(doc(db, 'users', id), { fn, pass, cp:25, rtt:10, tt:2, manager:false, admin:false });
 }
+async function deleteUser(id) { if(confirm("Supprimer ?")) await deleteDoc(doc(db, 'users', id)); }
 
-// --- CALENDRIER & DEMANDES ---
-function renderCalendar() {
-    const grid = document.getElementById('cal-grid');
-    grid.innerHTML = '';
-    const y = currentMonth.getFullYear(), m = currentMonth.getMonth();
-    document.getElementById('cal-month-title').textContent = new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(currentMonth);
-    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => grid.innerHTML += `<div style="text-align:center;font-size:11px;font-weight:700;color:#888">${d}</div>`);
-
-    let firstDay = new Date(y, m, 1).getDay();
-    let offset = firstDay === 0 ? 6 : firstDay - 1;
-    for(let i=0; i<offset; i++) grid.innerHTML += `<div class="cday" style="background:#fcfcfc"></div>`;
-    
-    for(let d=1; d<=new Date(y,m+1,0).getDate(); d++) {
-        const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        let html = `<div class="cday"><span style="font-weight:700;font-size:11px">${d}</span>`;
-        DB_DEMANDS.filter(dem => dem.status === 'approved' && ds >= dem.start && ds <= dem.end).forEach(dem => {
-            const u = DB_USERS[dem.uid.toLowerCase()];
-            html += `<span class="pill pill-${dem.type}">${u?u.fn:dem.uid}</span>`;
-        });
-        grid.innerHTML += html + `</div>`;
-    }
-}
-
+// --- MEMBRE ---
 async function submitDem() {
-    const type = document.getElementById('d-type').value;
-    const start = document.getElementById('d-s').value, end = document.getElementById('d-e').value;
-    if(!start || !end) return alert("Dates ?");
+    const type = document.getElementById('d-type').value, start = document.getElementById('d-s').value, end = document.getElementById('d-e').value;
     await setDoc(doc(collection(db, 'demands')), { uid:CU, type, start, end, status:'pending' });
-    alert("Demande envoyée");
+    alert("Envoyé !");
 }
-
 function renderMyDemands() {
-    const list = document.getElementById('m-list');
-    list.innerHTML = '';
+    const l = document.getElementById('m-list'); l.innerHTML = '';
     DB_DEMANDS.filter(d => d.uid === CU).reverse().forEach(d => {
-        list.innerHTML += `<div style="padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between">
-            <span>${d.type.toUpperCase()} (${d.start})</span>
-            <span style="font-weight:bold; color:${d.status==='approved'?'var(--ok)':'var(--warn)'}">${d.status}</span>
+        l.innerHTML += `<div style="padding:8px; border-bottom:1px solid #eee; display:flex; justify-content:space-between">
+            <span>${d.type.toUpperCase()} (${d.start})</span> <span class="st-p st-${d.status}">${d.status}</span>
         </div>`;
     });
 }
 
-function mTab(b, id) { 
-    document.querySelectorAll('#sec-member .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active');
-    ['mt-dash','mt-cal','mt-dem'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden');
-}
-function aTab(b, id) { 
-    document.querySelectorAll('#sec-admin .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active');
-    ['at-users','at-val'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden');
-}
-function switchSpace(s) { 
-    document.querySelectorAll('.space-section').forEach(x=>x.classList.add('hidden')); document.getElementById('sec-'+s).classList.remove('hidden'); 
-}
-function changeMonth(dir) { currentMonth.setMonth(currentMonth.getMonth()+dir); renderCalendar(); }
+function mTab(b, id) { document.querySelectorAll('#sec-member .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active'); ['mt-dash','mt-cal','mt-dem'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function aTab(b, id) { document.querySelectorAll('#sec-admin .tab').forEach(t=>t.classList.remove('active')); b.classList.add('active'); ['at-users','at-val'].forEach(d=>document.getElementById(d).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function switchSpace(s) { document.querySelectorAll('.space-section').forEach(x=>x.classList.add('hidden')); document.getElementById('sec-'+s).classList.remove('hidden'); }
 
-window.doLogin=doLogin; window.submitDem=submitDem; window.mTab=mTab; window.aTab=aTab; window.switchSpace=switchSpace; window.changeMonth=changeMonth; window.updateRole=updateRole; window.addUser=addUser; window.deleteUser=deleteUser; window.decide=decide;
+window.doLogin=doLogin; window.submitDem=submitDem; window.mTab=mTab; window.aTab=aTab; window.switchSpace=switchSpace; window.updateRole=updateRole; window.addUser=addUser; window.deleteUser=deleteUser; window.decide=decide; window.saveCounters=saveCounters;
 initData();
 </script>
 </body>
