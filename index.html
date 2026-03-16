@@ -9,127 +9,113 @@
 :root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--warn:#BA7517;--warn-bg:#FAEEDA;--ok:#3B6D11;--ok-bg:#EAF3DE;--err:#A32D2D;--err-bg:#FCEBEB;--radius:10px;--radius-lg:14px}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:14px;min-height:100vh}
 
-/* LOGIQUE DE VISIBILITÉ */
+/* --- FIX VISIBILITÉ --- */
 .screen { display: none !important; }
 .screen.active { display: block !important; }
+#s-loading { display: none; position: fixed; inset: 0; z-index: 9999; background: #f0f2f5; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+#s-loading.active { display: flex !important; }
 
-#s-loading {
-  display: flex; position: fixed; inset: 0; z-index: 9999;
-  background: #f0f2f5; align-items: center; justify-content: center;
-  flex-direction: column; gap: 12px;
-}
+/* --- LOGIN AVEC TON ARRIÈRE-PLAN --- */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.login-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80');background-size:cover;background-position:center}
+.login-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.4)}
+.login-card{position:relative;z-index:2;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:20px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 10px 50px rgba(0,0,0,0.3);text-align:center}
 
-/* UI COMPONENTS */
-input,select{width:100%;padding:10px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;font-size:14px}
-.btn{padding:10px 16px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:500}
+/* --- UI ELEMENTS --- */
+input,select{width:100%;padding:10px;border:1px solid #dde0e8;border-radius:var(--radius);margin-bottom:12px}
+.btn{padding:10px 16px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:600}
 .btn-p{background:var(--pri);color:#fff;border-color:var(--pri)}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100}
 .page{max-width:1000px;margin:0 auto;padding:20px 16px}
-.card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.2rem;margin-bottom:14px;box-shadow: 0 2px 4px rgba(0,0,0,0.02)}
-
-/* CALENDRIER */
-.cal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.cg7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.cday-name { text-align: center; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; }
-.cday { min-height: 90px; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 6px; position: relative; }
-.cday.today { border-color: var(--pri); background: #f8fbff; }
-.cday-num { font-weight: 800; font-size: 13px; color: #444; margin-bottom: 6px; display: block; }
-.pill { font-size: 10px; padding: 3px 6px; border-radius: 4px; margin-bottom: 3px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pill-cp { background: var(--cp-bg); color: var(--cp); border-left: 3px solid var(--cp); }
-.pill-rtt { background: var(--rtt-bg); color: var(--rtt); border-left: 3px solid var(--rtt); }
-.pill-tt { background: var(--tt-bg); color: var(--tt); border-left: 3px solid var(--tt); }
-
-.tabs{display:flex;gap:5px;margin-bottom:20px;background:#e4e7ed;padding:4px;border-radius:12px}
-.tab{flex:1;border:none;padding:10px;border-radius:9px;font-weight:600;color:#666;cursor:pointer;transition:0.2s}
+.card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.2rem;margin-bottom:15px}
+.tabs{display:flex;gap:5px;background:#e4e7ed;padding:4px;border-radius:12px;margin-bottom:20px}
+.tab{flex:1;border:none;padding:10px;border-radius:9px;cursor:pointer;font-weight:600;color:#666}
 .tab.active{background:#fff;color:var(--pri);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
 
+/* --- CALENDRIER --- */
+.cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.cg7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cday{min-height:85px;background:#fff;border:1px solid #eee;border-radius:8px;padding:5px}
+.cday.off{background:#f9f9f9}
+.cday-num{font-weight:700;font-size:12px;margin-bottom:5px;display:block}
+.pill{font-size:10px;padding:2px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.pill-cp{background:var(--cp-bg);color:var(--cp);border-left:3px solid var(--cp)}
+.pill-rtt{background:var(--rtt-bg);color:var(--rtt);border-left:3px solid var(--rtt)}
+.pill-tt{background:var(--tt-bg);color:var(--tt);border-left:3px solid var(--tt)}
+
+.hidden{display:none !important}
 .spinner{width:32px;height:32px;border:3px solid #e0e3ea;border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.hidden{display:none !important}
 </style>
 </head>
 <body>
 
-<div id="s-loading"><div class="spinner"></div><p>Connexion à LactaFlow...</p></div>
+<div id="s-loading" class="active"><div class="spinner"></div></div>
 
 <div class="screen" id="s-login">
-    <div style="display:flex; height:100vh; align-items:center; justify-content:center; background:linear-gradient(135deg, #003d82 0%, #1a6abf 100%)">
-        <div class="card" style="width:350px; padding:2.5rem; border-radius:24px">
-            <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="45" style="margin-bottom:25px">
-            <h2 style="margin-bottom:20px; color:var(--pri)">Planning Équipe</h2>
-            <div style="text-align:left; margin-bottom:15px">
-                <label style="font-size:12px; font-weight:600; color:#666">Identifiant</label>
-                <input type="text" id="li-u" placeholder="ex: jean.dupont">
-            </div>
-            <div style="text-align:left; margin-bottom:20px">
-                <label style="font-size:12px; font-weight:600; color:#666">Mot de passe</label>
-                <input type="password" id="li-p" placeholder="••••••••">
-            </div>
-            <div id="li-err" style="color:var(--err); font-size:12px; margin-bottom:15px" class="hidden"></div>
-            <button class="btn btn-p" style="width:100%; padding:12px" onclick="doLogin()">Se connecter</button>
-        </div>
+  <div class="login-screen">
+    <div class="login-bg"></div>
+    <div class="login-overlay"></div>
+    <div class="login-card">
+      <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="45" style="margin-bottom:20px">
+      <h2 style="color:var(--pri); margin-bottom:20px">LactaFlow</h2>
+      <div style="text-align:left"><label>Identifiant</label><input type="text" id="li-u"></div>
+      <div style="text-align:left"><label>Mot de passe</label><input type="password" id="li-p"></div>
+      <button class="btn btn-p" style="width:100%" onclick="doLogin()">Connexion</button>
     </div>
+  </div>
 </div>
 
 <div class="screen" id="s-app">
-    <div class="topbar">
-        <div style="display:flex; align-items:center; gap:10px">
-            <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="24">
-            <div style="font-weight:800; color:var(--pri); letter-spacing:-0.5px">LactaFlow</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:15px">
-            <span id="user-name" style="font-weight:600"></span>
-            <button class="btn" style="padding:5px 12px; font-size:12px" onclick="location.reload()">Déconnexion</button>
-        </div>
+  <div class="topbar">
+    <div style="font-weight:800; color:var(--pri)">LactaFlow</div>
+    <div id="tb-nav"></div>
+    <button class="btn" style="font-size:12px" onclick="location.reload()">Déconnexion</button>
+  </div>
+
+  <div class="page">
+    <div class="tabs">
+      <button class="tab active" onclick="mTab(this,'mt-dash')">Mon Espace</button>
+      <button class="tab" onclick="mTab(this,'mt-cal')">Planning Équipe</button>
+      <button class="tab" onclick="mTab(this,'mt-dem')">Nouvelle Demande</button>
     </div>
 
-    <div class="page">
-        <div class="tabs">
-            <button class="tab active" onclick="mTab(this,'mt-cal')">Planning Équipe</button>
-            <button class="tab" onclick="mTab(this,'mt-dem')">Nouvelle Demande</button>
-        </div>
-
-        <div id="mt-cal">
-            <div class="card">
-                <div class="cal-hdr">
-                    <button class="btn" onclick="changeMonth(-1)">◀</button>
-                    <h2 id="cal-month-title" style="text-transform: capitalize"></h2>
-                    <button class="btn" onclick="changeMonth(1)">▶</button>
-                </div>
-                <div class="cg7" id="cal-grid"></div>
-            </div>
-        </div>
-
-        <div id="mt-dem" class="hidden">
-            <div class="card" style="max-width:500px; margin: 0 auto">
-                <h3 style="margin-bottom:20px">Déposer une absence</h3>
-                <div style="margin-bottom:15px">
-                    <label style="display:block; margin-bottom:5px; font-weight:600">Type</label>
-                    <select id="d-type">
-                        <option value="cp">Congés Payés</option>
-                        <option value="rtt">RTT</option>
-                        <option value="tt">Télétravail</option>
-                    </select>
-                </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px">
-                    <div>
-                        <label style="display:block; margin-bottom:5px; font-weight:600">Début</label>
-                        <input type="date" id="d-s">
-                    </div>
-                    <div>
-                        <label style="display:block; margin-bottom:5px; font-weight:600">Fin</label>
-                        <input type="date" id="d-e">
-                    </div>
-                </div>
-                <button class="btn btn-p" style="width:100%" onclick="submitDem()">Soumettre pour validation</button>
-            </div>
-        </div>
+    <div id="mt-dash">
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:15px">
+        <div class="card" style="text-align:center"><small>CP</small><h2 id="m-cp" style="color:var(--cp)">-</h2></div>
+        <div class="card" style="text-align:center"><small>RTT</small><h2 id="m-rtt" style="color:var(--rtt)">-</h2></div>
+        <div class="card" style="text-align:center"><small>TT</small><h2 id="m-tt" style="color:var(--tt)">-</h2></div>
+      </div>
+      <div class="card"><h3>Mes dernières demandes</h3><div id="m-list" style="margin-top:10px"></div></div>
     </div>
+
+    <div id="mt-cal" class="hidden">
+      <div class="card">
+        <div class="cal-hdr">
+          <button class="btn" onclick="changeMonth(-1)">◀</button>
+          <h3 id="cal-month-title"></h3>
+          <button class="btn" onclick="changeMonth(1)">▶</button>
+        </div>
+        <div class="cg7" id="cal-grid"></div>
+      </div>
+    </div>
+
+    <div id="mt-dem" class="hidden">
+      <div class="card">
+        <h3>Nouvelle absence</h3>
+        <select id="d-type" style="margin-top:15px"><option value="cp">Congés Payés</option><option value="rtt">RTT</option><option value="tt">Télétravail</option></select>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+          <input type="date" id="d-s"> <input type="date" id="d-e">
+        </div>
+        <button class="btn btn-p" style="width:100%" onclick="submitDem()">Envoyer</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCw6EmX6iJQSi5OucFxi9d6wuHx1Gxlj3w",
@@ -148,139 +134,93 @@ let DB_USERS = {};
 let DB_DEMANDS = [];
 let currentMonth = new Date();
 
-// --- VISIBILITÉ ---
 function forceKillLoading() {
     const l = document.getElementById('s-loading');
-    if(l) { 
-        l.style.display = 'none';
-        setTimeout(() => l.remove(), 500);
-    }
+    if(l) { l.classList.remove('active'); setTimeout(()=>l.remove(), 400); }
 }
 
-// --- INITIALISATION ---
 async function initData() {
-    try {
-        // Chargement initial des utilisateurs pour le login
-        const snap = await getDocs(collection(db, 'users'));
-        snap.forEach(d => DB_USERS[d.id.toLowerCase()] = {id: d.id, ...d.data()});
-        
-        // Surveillance temps réel des demandes approuvées
-        onSnapshot(collection(db, 'demands'), (s) => {
-            DB_DEMANDS = [];
-            s.forEach(d => DB_DEMANDS.push(d.data()));
-            if(CU) renderCalendar();
-        });
-
-        forceKillLoading();
-        document.getElementById('s-login').classList.add('active');
-    } catch(e) {
-        console.error("Erreur init:", e);
-        forceKillLoading();
-        document.getElementById('s-login').classList.add('active');
-    }
+    onSnapshot(collection(db, 'users'), s => {
+        s.forEach(d => DB_USERS[d.id.toLowerCase()] = {id: d.id, ...d.data()});
+        if(CU) refreshUI();
+    });
+    onSnapshot(collection(db, 'demands'), s => {
+        DB_DEMANDS = [];
+        s.forEach(d => DB_DEMANDS.push(d.data()));
+        if(CU) refreshUI();
+    });
+    forceKillLoading();
+    document.getElementById('s-login').classList.add('active');
 }
 
-// --- CONNEXION ---
 async function doLogin() {
-    const uInput = document.getElementById('li-u').value.trim().toLowerCase();
-    const pInput = document.getElementById('li-p').value;
-    const errEl = document.getElementById('li-err');
-
-    // On vérifie d'abord dans les données déjà chargées
-    const user = DB_USERS[uInput];
-
-    if (user && user.pass === pInput) {
-        CU = user.id;
-        document.getElementById('user-name').textContent = user.fn;
+    const u = document.getElementById('li-u').value.trim().toLowerCase();
+    const p = document.getElementById('li-p').value;
+    if(DB_USERS[u] && DB_USERS[u].pass === p) {
+        CU = DB_USERS[u].id;
         document.getElementById('s-login').classList.remove('active');
         document.getElementById('s-app').classList.add('active');
-        renderCalendar();
-    } else {
-        errEl.textContent = "Identifiants invalides";
-        errEl.classList.remove('hidden');
-    }
+        refreshUI();
+    } else { alert("Erreur identifiants"); }
 }
 
-// --- CALENDRIER ---
+function refreshUI() {
+    const user = DB_USERS[CU.toLowerCase()];
+    document.getElementById('m-cp').textContent = user.cp || 0;
+    document.getElementById('m-rtt').textContent = user.rtt || 0;
+    document.getElementById('m-tt').textContent = user.tt || 0;
+    renderCalendar();
+}
+
 function renderCalendar() {
     const grid = document.getElementById('cal-grid');
     grid.innerHTML = '';
     const y = currentMonth.getFullYear();
     const m = currentMonth.getMonth();
-    
     document.getElementById('cal-month-title').textContent = new Intl.DateTimeFormat('fr-FR', {month:'long', year:'numeric'}).format(currentMonth);
 
-    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => grid.innerHTML += `<div class="cday-name">${d}</div>`);
+    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => grid.innerHTML += `<div style="text-align:center; font-size:11px; font-weight:bold; color:#888">${d}</div>`);
 
     let firstDay = new Date(y, m, 1).getDay();
     let offset = firstDay === 0 ? 6 : firstDay - 1;
+    for(let i=0; i<offset; i++) grid.innerHTML += `<div class="cday off"></div>`;
+
     let days = new Date(y, m + 1, 0).getDate();
-
-    for(let i=0; i<offset; i++) grid.innerHTML += `<div class="cday" style="background:#fcfcfc"></div>`;
-
     for(let d=1; d<=days; d++) {
         const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        let html = `<div class="cday ${isToday(y,m,d)?'today':''}">
-            <span class="cday-num">${d}</span>`;
+        let html = `<div class="cday"><span class="cday-num">${d}</span>`;
         
-        // Filtrer les absences validées pour ce jour
         DB_DEMANDS.filter(dem => dem.status === 'approved' && dateStr >= dem.start && dateStr <= dem.end)
                   .forEach(dem => {
-                      const user = DB_USERS[dem.uid.toLowerCase()];
-                      const name = user ? user.fn : dem.uid;
-                      html += `<div class="pill pill-${dem.type}">${name}</div>`;
+                      const u = DB_USERS[dem.uid.toLowerCase()];
+                      html += `<span class="pill pill-${dem.type}">${u ? u.fn : dem.uid}</span>`;
                   });
-
-        html += `</div>`;
-        grid.innerHTML += html;
+        grid.innerHTML += html + `</div>`;
     }
 }
 
-function isToday(y,m,d) {
-    const t = new Date();
-    return t.getFullYear()===y && t.getMonth()===m && t.getDate()===d;
-}
-
-function changeMonth(dir) {
-    currentMonth.setMonth(currentMonth.getMonth() + dir);
-    renderCalendar();
-}
-
-// --- DEMANDES ---
 async function submitDem() {
     const type = document.getElementById('d-type').value;
     const start = document.getElementById('d-s').value;
     const end = document.getElementById('d-e').value;
-    
-    if(!start || !end) return alert("Veuillez choisir les dates");
-
-    try {
-        await setDoc(doc(collection(db, 'demands')), {
-            uid: CU,
-            type: type,
-            start: start,
-            end: end,
-            status: 'pending',
-            created: new Date().toISOString()
-        });
-        alert("Demande envoyée au manager !");
-        mTab(document.querySelector('.tab'), 'mt-cal');
-    } catch(e) { alert("Erreur lors de l'envoi"); }
+    if(!start || !end) return alert("Dates ?");
+    await setDoc(doc(collection(db, 'demands')), { uid: CU, type, start, end, status: 'pending' });
+    alert("Demande envoyée !");
 }
 
 function mTab(btn, id) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('mt-cal').classList.add('hidden');
-    document.getElementById('mt-dem').classList.add('hidden');
+    ['mt-dash', 'mt-cal', 'mt-dem'].forEach(d => document.getElementById(d).classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
 }
 
+function changeMonth(dir) { currentMonth.setMonth(currentMonth.getMonth() + dir); renderCalendar(); }
+
 window.doLogin = doLogin;
-window.changeMonth = changeMonth;
 window.submitDem = submitDem;
 window.mTab = mTab;
-
+window.changeMonth = changeMonth;
 initData();
 </script>
 </body>
