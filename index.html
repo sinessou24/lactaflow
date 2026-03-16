@@ -9,81 +9,91 @@
 :root{--pri:#003d82;--pri-l:#e6edf7;--pri-d:#002a5c;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--warn:#BA7517;--warn-bg:#FAEEDA;--ok:#3B6D11;--ok-bg:#EAF3DE;--err:#A32D2D;--err-bg:#FCEBEB;--radius:10px;--radius-lg:14px}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:14px;min-height:100vh}
 
-/* --- LOGIQUE DE VISIBILITÉ --- */
+/* LOGIQUE DE VISIBILITÉ */
 .screen { display: none !important; }
 .screen.active { display: block !important; }
-#s-loading { display: none; position: fixed; inset: 0; z-index: 9999; background: #f0f2f5; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
-#s-loading.active { display: flex !important; }
 
-/* --- STYLE APP --- */
-input,select{width:100%;padding:9px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff}
-.btn{padding:8px 16px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer}
+#s-loading {
+  display: flex; position: fixed; inset: 0; z-index: 9999;
+  background: #f0f2f5; align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px;
+}
+
+/* UI COMPONENTS */
+input,select{width:100%;padding:10px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;font-size:14px}
+.btn{padding:10px 16px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:500}
 .btn-p{background:var(--pri);color:#fff;border-color:var(--pri)}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100}
 .page{max-width:1000px;margin:0 auto;padding:20px 16px}
-.card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.1rem;margin-bottom:14px}
-.tabs{display:flex;gap:3px;padding:4px;background:#f0f2f5;border-radius:var(--radius-lg);margin-bottom:16px}
-.tab{flex:1;padding:8px;border:none;background:transparent;border-radius:var(--radius);font-size:12px;cursor:pointer;color:#666}
-.tab.active{background:#fff;color:#1a1a1a;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.card{background:#fff;border:1px solid #e8eaf0;border-radius:var(--radius-lg);padding:1.2rem;margin-bottom:14px;box-shadow: 0 2px 4px rgba(0,0,0,0.02)}
 
-/* --- CALENDRIER ÉVOLUÉ --- */
-.cal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.cg7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-.cday-name { text-align: center; font-size: 11px; font-weight: 600; color: #888; padding-bottom: 5px; }
-.cday { min-height: 85px; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 4px; position: relative; }
-.cday.off { background: #f9f9f9; color: #ccc; }
-.cday-num { font-weight: 700; font-size: 12px; margin-bottom: 4px; display: block; }
-
-/* Pastilles de statut */
-.pill { font-size: 10px; padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+/* CALENDRIER */
+.cal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.cg7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cday-name { text-align: center; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; }
+.cday { min-height: 90px; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 6px; position: relative; }
+.cday.today { border-color: var(--pri); background: #f8fbff; }
+.cday-num { font-weight: 800; font-size: 13px; color: #444; margin-bottom: 6px; display: block; }
+.pill { font-size: 10px; padding: 3px 6px; border-radius: 4px; margin-bottom: 3px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pill-cp { background: var(--cp-bg); color: var(--cp); border-left: 3px solid var(--cp); }
 .pill-rtt { background: var(--rtt-bg); color: var(--rtt); border-left: 3px solid var(--rtt); }
 .pill-tt { background: var(--tt-bg); color: var(--tt); border-left: 3px solid var(--tt); }
-.pill-office { background: #f0f0f0; color: #444; border-left: 3px solid #888; }
 
-.hidden { display: none !important; }
+.tabs{display:flex;gap:5px;margin-bottom:20px;background:#e4e7ed;padding:4px;border-radius:12px}
+.tab{flex:1;border:none;padding:10px;border-radius:9px;font-weight:600;color:#666;cursor:pointer;transition:0.2s}
+.tab.active{background:#fff;color:var(--pri);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+
 .spinner{width:32px;height:32px;border:3px solid #e0e3ea;border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none !important}
 </style>
 </head>
 <body>
 
-<div id="s-loading" class="active"><div class="spinner"></div></div>
+<div id="s-loading"><div class="spinner"></div><p>Connexion à LactaFlow...</p></div>
 
 <div class="screen" id="s-login">
-    <div style="display:flex; height:100vh; align-items:center; justify-content:center; background:#f0f2f5">
-        <div class="card" style="width:320px; text-align:center">
-            <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="40" style="margin-bottom:20px">
-            <input type="text" id="li-u" placeholder="Identifiant" style="margin-bottom:10px">
-            <input type="password" id="li-p" placeholder="Mot de passe" style="margin-bottom:15px">
-            <button class="btn btn-p" style="width:100%" onclick="doLogin()">Connexion</button>
+    <div style="display:flex; height:100vh; align-items:center; justify-content:center; background:linear-gradient(135deg, #003d82 0%, #1a6abf 100%)">
+        <div class="card" style="width:350px; padding:2.5rem; border-radius:24px">
+            <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="45" style="margin-bottom:25px">
+            <h2 style="margin-bottom:20px; color:var(--pri)">Planning Équipe</h2>
+            <div style="text-align:left; margin-bottom:15px">
+                <label style="font-size:12px; font-weight:600; color:#666">Identifiant</label>
+                <input type="text" id="li-u" placeholder="ex: jean.dupont">
+            </div>
+            <div style="text-align:left; margin-bottom:20px">
+                <label style="font-size:12px; font-weight:600; color:#666">Mot de passe</label>
+                <input type="password" id="li-p" placeholder="••••••••">
+            </div>
+            <div id="li-err" style="color:var(--err); font-size:12px; margin-bottom:15px" class="hidden"></div>
+            <button class="btn btn-p" style="width:100%; padding:12px" onclick="doLogin()">Se connecter</button>
         </div>
     </div>
 </div>
 
 <div class="screen" id="s-app">
     <div class="topbar">
-        <div style="font-weight:700; color:var(--pri)">LactaFlow</div>
-        <div id="tb-nav" style="display:flex; gap:10px"></div>
-        <button class="btn" onclick="location.reload()">Quitter</button>
+        <div style="display:flex; align-items:center; gap:10px">
+            <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="24">
+            <div style="font-weight:800; color:var(--pri); letter-spacing:-0.5px">LactaFlow</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:15px">
+            <span id="user-name" style="font-weight:600"></span>
+            <button class="btn" style="padding:5px 12px; font-size:12px" onclick="location.reload()">Déconnexion</button>
+        </div>
     </div>
 
     <div class="page">
         <div class="tabs">
-            <button class="tab active" onclick="mTab(this,'mt-dash')">Tableau de bord</button>
-            <button class="tab" onclick="mTab(this,'mt-cal')">Planning Équipe</button>
-            <button class="tab" onclick="mTab(this,'mt-dem')">Poser une absence</button>
+            <button class="tab active" onclick="mTab(this,'mt-cal')">Planning Équipe</button>
+            <button class="tab" onclick="mTab(this,'mt-dem')">Nouvelle Demande</button>
         </div>
 
-        <div id="mt-dash">
-            <div class="card"><h3>Bonjour <span id="user-name"></span></h3></div>
-        </div>
-
-        <div id="mt-cal" class="hidden">
+        <div id="mt-cal">
             <div class="card">
                 <div class="cal-hdr">
                     <button class="btn" onclick="changeMonth(-1)">◀</button>
-                    <h2 id="cal-month-title">Mars 2026</h2>
+                    <h2 id="cal-month-title" style="text-transform: capitalize"></h2>
                     <button class="btn" onclick="changeMonth(1)">▶</button>
                 </div>
                 <div class="cg7" id="cal-grid"></div>
@@ -91,13 +101,27 @@ input,select{width:100%;padding:9px 12px;border:1px solid #dde0e8;border-radius:
         </div>
 
         <div id="mt-dem" class="hidden">
-            <div class="card">
-                <div style="margin-bottom:10px"><label>Type d'absence</label>
-                <select id="d-type"><option value="cp">Congés Payés</option><option value="rtt">RTT</option><option value="tt">Télétravail</option></select></div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px">
-                    <input type="date" id="d-s"> <input type="date" id="d-e">
+            <div class="card" style="max-width:500px; margin: 0 auto">
+                <h3 style="margin-bottom:20px">Déposer une absence</h3>
+                <div style="margin-bottom:15px">
+                    <label style="display:block; margin-bottom:5px; font-weight:600">Type</label>
+                    <select id="d-type">
+                        <option value="cp">Congés Payés</option>
+                        <option value="rtt">RTT</option>
+                        <option value="tt">Télétravail</option>
+                    </select>
                 </div>
-                <button class="btn btn-p" onclick="submitDem()">Envoyer la demande</button>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px">
+                    <div>
+                        <label style="display:block; margin-bottom:5px; font-weight:600">Début</label>
+                        <input type="date" id="d-s">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:5px; font-weight:600">Fin</label>
+                        <input type="date" id="d-e">
+                    </div>
+                </div>
+                <button class="btn btn-p" style="width:100%" onclick="submitDem()">Soumettre pour validation</button>
             </div>
         </div>
     </div>
@@ -105,7 +129,7 @@ input,select{width:100%;padding:9px 12px;border:1px solid #dde0e8;border-radius:
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, getDocs, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, getDocs, setDoc, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCw6EmX6iJQSi5OucFxi9d6wuHx1Gxlj3w",
@@ -127,69 +151,94 @@ let currentMonth = new Date();
 // --- VISIBILITÉ ---
 function forceKillLoading() {
     const l = document.getElementById('s-loading');
-    if(l) { l.classList.remove('active'); setTimeout(()=>l.remove(), 400); }
+    if(l) { 
+        l.style.display = 'none';
+        setTimeout(() => l.remove(), 500);
+    }
 }
 
+// --- INITIALISATION ---
 async function initData() {
-    onSnapshot(collection(db, 'users'), s => {
-        s.forEach(d => DB_USERS[d.id] = {id: d.id, ...d.data()});
-        if(CU) renderCalendar();
-    });
-    onSnapshot(collection(db, 'demands'), s => {
-        DB_DEMANDS = [];
-        s.forEach(d => DB_DEMANDS.push({id: d.id, ...d.data()}));
-        if(CU) renderCalendar();
-    });
-    forceKillLoading();
-    document.getElementById('s-login').classList.add('active');
+    try {
+        // Chargement initial des utilisateurs pour le login
+        const snap = await getDocs(collection(db, 'users'));
+        snap.forEach(d => DB_USERS[d.id.toLowerCase()] = {id: d.id, ...d.data()});
+        
+        // Surveillance temps réel des demandes approuvées
+        onSnapshot(collection(db, 'demands'), (s) => {
+            DB_DEMANDS = [];
+            s.forEach(d => DB_DEMANDS.push(d.data()));
+            if(CU) renderCalendar();
+        });
+
+        forceKillLoading();
+        document.getElementById('s-login').classList.add('active');
+    } catch(e) {
+        console.error("Erreur init:", e);
+        forceKillLoading();
+        document.getElementById('s-login').classList.add('active');
+    }
 }
 
-// --- CALENDRIER ÉQUIPE ---
+// --- CONNEXION ---
+async function doLogin() {
+    const uInput = document.getElementById('li-u').value.trim().toLowerCase();
+    const pInput = document.getElementById('li-p').value;
+    const errEl = document.getElementById('li-err');
+
+    // On vérifie d'abord dans les données déjà chargées
+    const user = DB_USERS[uInput];
+
+    if (user && user.pass === pInput) {
+        CU = user.id;
+        document.getElementById('user-name').textContent = user.fn;
+        document.getElementById('s-login').classList.remove('active');
+        document.getElementById('s-app').classList.add('active');
+        renderCalendar();
+    } else {
+        errEl.textContent = "Identifiants invalides";
+        errEl.classList.remove('hidden');
+    }
+}
+
+// --- CALENDRIER ---
 function renderCalendar() {
     const grid = document.getElementById('cal-grid');
     grid.innerHTML = '';
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
+    const y = currentMonth.getFullYear();
+    const m = currentMonth.getMonth();
     
     document.getElementById('cal-month-title').textContent = new Intl.DateTimeFormat('fr-FR', {month:'long', year:'numeric'}).format(currentMonth);
 
-    // En-têtes jours
-    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => {
-        grid.innerHTML += `<div class="cday-name">${d}</div>`;
-    });
+    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => grid.innerHTML += `<div class="cday-name">${d}</div>`);
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const startOffset = firstDay === 0 ? 6 : firstDay - 1;
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let firstDay = new Date(y, m, 1).getDay();
+    let offset = firstDay === 0 ? 6 : firstDay - 1;
+    let days = new Date(y, m + 1, 0).getDate();
 
-    // Cases vides début
-    for(let i=0; i<startOffset; i++) grid.innerHTML += `<div class="cday off"></div>`;
+    for(let i=0; i<offset; i++) grid.innerHTML += `<div class="cday" style="background:#fcfcfc"></div>`;
 
-    // Jours du mois
-    for(let day=1; day<=daysInMonth; day++) {
-        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-        let html = `<div class="cday"><span class="cday-num">${day}</span>`;
+    for(let d=1; d<=days; d++) {
+        const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        let html = `<div class="cday ${isToday(y,m,d)?'today':''}">
+            <span class="cday-num">${d}</span>`;
         
-        // On cherche qui est absent ou en TT ce jour-là
-        Object.values(DB_USERS).forEach(user => {
-            // 1. Chercher une demande validée
-            const activeDem = DB_DEMANDS.find(d => 
-                d.uid === user.id && 
-                d.status === 'approved' && 
-                dateStr >= d.start && dateStr <= d.end
-            );
-
-            if(activeDem) {
-                html += `<span class="pill pill-${activeDem.type}">${user.fn} (${activeDem.type.toUpperCase()})</span>`;
-            } else {
-                // Par défaut, si jour ouvré, on peut afficher "Bureau" ou rien
-                // html += `<span class="pill pill-office">${user.fn}</span>`;
-            }
-        });
+        // Filtrer les absences validées pour ce jour
+        DB_DEMANDS.filter(dem => dem.status === 'approved' && dateStr >= dem.start && dateStr <= dem.end)
+                  .forEach(dem => {
+                      const user = DB_USERS[dem.uid.toLowerCase()];
+                      const name = user ? user.fn : dem.uid;
+                      html += `<div class="pill pill-${dem.type}">${name}</div>`;
+                  });
 
         html += `</div>`;
         grid.innerHTML += html;
     }
+}
+
+function isToday(y,m,d) {
+    const t = new Date();
+    return t.getFullYear()===y && t.getMonth()===m && t.getDate()===d;
 }
 
 function changeMonth(dir) {
@@ -197,48 +246,40 @@ function changeMonth(dir) {
     renderCalendar();
 }
 
-// --- ACTIONS ---
-async function doLogin() {
-    const u = document.getElementById('li-u').value.toLowerCase();
-    const p = document.getElementById('li-p').value;
-    if(DB_USERS[u] && DB_USERS[u].pass === p) {
-        CU = u;
-        document.getElementById('user-name').textContent = DB_USERS[u].fn;
-        document.getElementById('s-login').classList.remove('active');
-        document.getElementById('s-app').classList.add('active');
-        renderCalendar();
-    }
-}
-
+// --- DEMANDES ---
 async function submitDem() {
     const type = document.getElementById('d-type').value;
     const start = document.getElementById('d-s').value;
     const end = document.getElementById('d-e').value;
     
-    if(!start || !end) return alert("Dates manquantes");
+    if(!start || !end) return alert("Veuillez choisir les dates");
 
-    await setDoc(doc(collection(db, 'demands')), {
-        uid: CU,
-        type: type,
-        start: start,
-        end: end,
-        status: 'pending', // Attend validation manager pour apparaître au planning
-        created: new Date().toISOString()
-    });
-    alert("Demande envoyée ! Elle apparaîtra au planning après validation.");
+    try {
+        await setDoc(doc(collection(db, 'demands')), {
+            uid: CU,
+            type: type,
+            start: start,
+            end: end,
+            status: 'pending',
+            created: new Date().toISOString()
+        });
+        alert("Demande envoyée au manager !");
+        mTab(document.querySelector('.tab'), 'mt-cal');
+    } catch(e) { alert("Erreur lors de l'envoi"); }
 }
 
 function mTab(btn, id) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    ['mt-dash', 'mt-cal', 'mt-dem'].forEach(div => document.getElementById(div).classList.add('hidden'));
+    document.getElementById('mt-cal').classList.add('hidden');
+    document.getElementById('mt-dem').classList.add('hidden');
     document.getElementById(id).classList.remove('hidden');
 }
 
 window.doLogin = doLogin;
+window.changeMonth = changeMonth;
 window.submitDem = submitDem;
 window.mTab = mTab;
-window.changeMonth = changeMonth;
 
 initData();
 </script>
