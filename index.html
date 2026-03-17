@@ -32,10 +32,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8eaf0;position:sticky;top:0;z-index:100}
 .avatar{width:35px;height:35px;border-radius:50%;object-fit:cover;background:#eee;border:1px solid #ddd;cursor:pointer;transition:0.2s}
 .avatar:hover{opacity:0.8; transform:scale(1.05)}
+.topbar .btn {
+    background: transparent;
+    color: #666;
+    border-color: #666;
+}
+.topbar .btn.active-nav {
+    background: #003d82;
+    color: #fff;
+    border-color: #003d82;
+}
+
+.topbar:hover .btn:hover {
+  background: #003d82; /* ou une couleur plus foncée */
+  border-color: #003d82;
+  color: #ffffff;
+}
+
+.topbar:hover .btn.active-nav:hover {
+  background: #003d82; /* ou une couleur plus foncée */
+  border-color: #003d82;
+  color: #ffffff;
+}
 
 /* UI ELEMENTS */
 input,select{width:100%;padding:8px;border:1px solid #dde0e8;border-radius:var(--radius);margin-bottom:10px}
 .btn{padding:8px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:600;font-size:12px}
+.btn:hover {
+  background: #003d82; /* ou une couleur plus foncée */
+  border-color: #003d82;
+  color: #ffffff;
+}
 .btn-p, .btn-s{background:var(--pri);color:#003d82;border-color:#003d82;border-radius: var(--radius);padding: 8px 12px;}
 .btn-s:hover {
   background: #003d82; /* ou une couleur plus foncée */
@@ -256,12 +283,13 @@ function refreshUI() {
     document.getElementById('u-avatar-top').src = u.img || 'https://ui-avatars.com/api/?background=random&name=' + u.fn;
     
     const nav = document.getElementById('tb-nav');
-    nav.innerHTML = `<button id="btn-member" class="btn btn-p active-nav" onclick="switchSpace('member')">Mon Espace</button>`;
+    nav.innerHTML = `<button id="btn-member" class="btn btn-p" onclick="switchSpace('member')">Mon Espace</button>`;
     if(u.admin || u.manager) {
-    nav.innerHTML += `<button id="btn-admin" class="btn" onclick="switchSpace('admin')">Manager</button>`;
-    renderAdmin();
+        nav.innerHTML += `<button id="btn-admin" class="btn" onclick="switchSpace('admin')">Manager</button>`;
+        renderAdmin();
     }
     renderMyDemands(); renderCalendar();
+    switchSpace('member');
 }
 
 async function uploadImg(input) {
@@ -422,10 +450,9 @@ function aTab(b, id) { document.querySelectorAll('#sec-admin .tab').forEach(t=>t
 function switchSpace(s) {
     document.querySelectorAll('.space-section').forEach(x => x.classList.add('hidden'));
     document.getElementById('sec-' + s).classList.remove('hidden');
-    document.getElementById('btn-member')?.classList.toggle('btn-p', s === 'member');
-    document.getElementById('btn-member')?.classList.toggle('btn', s !== 'member');
-    document.getElementById('btn-admin')?.classList.toggle('btn-p', s === 'admin');
-    document.getElementById('btn-admin')?.classList.toggle('btn', s !== 'admin');
+    
+    document.getElementById('btn-member')?.classList.toggle('active-nav', s === 'member');
+    document.getElementById('btn-admin')?.classList.toggle('active-nav', s === 'admin');
 }
 function changeMonth(dir) { currentMonth.setMonth(currentMonth.getMonth()+dir); renderCalendar(); }
 function logout() { localStorage.removeItem('lactaflow_user'); location.reload(); }
