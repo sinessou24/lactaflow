@@ -6,7 +6,7 @@
 <title>LactaFlow — RH & Planning</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--pri:#003d82;--pri-l:#e6edf7;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--radius:10px;--radius-lg:14px;--err:#A32D2D;--err-bg:#FCEBEB;--ok:#3B6D11;--ok-bg:#EAF3DE;--warn:#BA7517;--warn-bg:#FAEEDA}
+:root{--pri:#ffffff;--pri-l:#e6edf7;--cp:#1a6abf;--cp-bg:#e8f1fb;--rtt:#1D9E75;--rtt-bg:#E1F5EE;--tt:#7F77DD;--tt-bg:#EEEDFE;--radius:10px;--radius-lg:14px;--err:#A32D2D;--err-bg:#FCEBEB;--ok:#3B6D11;--ok-bg:#EAF3DE;--warn:#BA7517;--warn-bg:#FAEEDA}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a1a;font-size:14px;min-height:100vh}
 
 .screen { display: none !important; }
@@ -19,7 +19,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 /* Arrière-plan fixe demandé : Champ de cerisiers */
 #login-bg-img{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1551272744-19456affaa89?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');background-size:cover;background-position:center;transition: background 1s ease-in-out}
 .login-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.3);backdrop-filter: blur(1px)}
-.login-card{position:relative;z-index:10;background:rgba(255, 255, 255, 0.106);backdrop-filter:blur(10px);border-radius:0px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 10px 50px rgba(0,0,0,0.3);text-align:center}
+.login-card{position:relative;z-index:10;background:rgba(255, 255, 255, 0.106);backdrop-filter:blur(2px);border-radius:0px;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 10px 50px rgba(0,0,0,0.3);text-align:center}
 
 /* ANIMATION DE SAISON (Pétales) */
 #season-particles { position: absolute; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }
@@ -36,7 +36,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 /* UI ELEMENTS */
 input,select{width:100%;padding:8px;border:1px solid #dde0e8;border-radius:var(--radius);margin-bottom:10px}
 .btn{padding:8px 12px;border:1px solid #dde0e8;border-radius:var(--radius);background:#fff;cursor:pointer;font-weight:600;font-size:12px}
-.btn-p{background:var(--pri);color:#fff;border-color:var(--pri);border-radius: var(--radius);padding: 8px 12px;}
+.btn-p, .btn-s{background:var(--pri);color:#003d82;border-color:#003d82;border-radius: var(--radius);padding: 8px 12px;}
+.btn-s:hover {
+  background: #003d82; /* ou une couleur plus foncée */
+  border-color: #003d82;
+  color: #ffffff;
+}
 .btn-del{background:var(--err-bg);color:var(--err);border-color:var(--err)}
 
 .page{max-width:1100px;margin:0 auto;padding:20px 16px}
@@ -44,7 +49,11 @@ input,select{width:100%;padding:8px;border:1px solid #dde0e8;border-radius:var(-
 
 .tabs{display:flex;gap:5px;background:#e4e7ed;padding:4px;border-radius:12px;margin-bottom:20px}
 .tab{flex:1;border:none;padding:10px;border-radius:9px;cursor:pointer;font-weight:600;color:#666}
-.tab.active{background:#fff;color:var(--pri);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+.tab:hover { /* ou une couleur plus foncée */
+  border:1px solid #003d82;
+  color: #003d82;
+}
+.tab.active{background:#003d82;color:var(--pri);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
 
 /* PLANNING */
 .cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
@@ -86,10 +95,11 @@ td{padding:10px;border-bottom:1px solid #eee}
     <div id="season-particles"></div>
     <div class="login-overlay"></div>
     <div class="login-card">
-      <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="40" style="margin-bottom:40px">
-      <input type="text" id="li-u" placeholder="Identifiant" style="margin-bottom:20px">
+      <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="40" style="margin-bottom:20px">
+      <strong style="color:#003d82; font-size:18px">LactaFlow</strong>
+      <input type="text" id="li-u" placeholder="Identifiant" style="margin-bottom:20px; margin-top: 20px;">
       <input type="password" id="li-p" placeholder="Mot de passe" style="margin-bottom:20px">
-      <button class="btn btn-p" style="width:100%" onclick="doLogin()">Connexion</button>
+      <button class="btn btn-s" style="width:100%" onclick="doLogin()">Connexion</button>
     </div>
   </div>
 </div>
@@ -98,13 +108,13 @@ td{padding:10px;border-bottom:1px solid #eee}
   <div class="topbar">
     <div style="display:flex; gap:10px; align-items:center">
         <img src="https://www.lactalis-international.com/wp-content/uploads/2025/08/logo-LI-Blue.png" height="30">
-        <strong style="color:var(--pri); font-size:18px">LactaFlow</strong>
+        <strong style="color:#003d82; font-size:18px">LactaFlow</strong>
         <div id="tb-nav" style="display:flex; gap:5px"></div>
     </div>
     <div style="display:flex; align-items:center; gap:12px">
         <input type="file" id="file-up" style="display:none" accept="image/*" onchange="uploadImg(this)">
         <img id="u-avatar-top" src="" class="avatar" onclick="document.getElementById('file-up').click()" title="Cliquer pour changer de photo">
-        <button class="btn" onclick="logout()">Déconnexion</button>
+        <button class="btn btn-s" onclick="logout()">Déconnexion</button>
     </div>
   </div>
 
@@ -121,7 +131,7 @@ td{padding:10px;border-bottom:1px solid #eee}
                 <div class="card" style="text-align:center"><small>RTT</small><h2 id="m-rtt" style="color:var(--rtt)">-</h2></div>
                 <div class="card" style="text-align:center"><small>TT</small><h2 id="m-tt" style="color:var(--tt)">-</h2></div>
             </div>
-            
+
             <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:15px">
                 <div class="card">
                     <h3>Nouvelle demande</h3>
@@ -130,7 +140,7 @@ td{padding:10px;border-bottom:1px solid #eee}
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
                             <input type="date" id="d-s"><input type="date" id="d-e">
                         </div>
-                        <button class="btn btn-p" style="width:100%" onclick="submitDem()">Envoyer</button>
+                        <button class="btn btn-s" style="width:100%" onclick="submitDem()">Envoyer</button>
                     </div>
                 </div>
                 <div class="card">
@@ -138,6 +148,17 @@ td{padding:10px;border-bottom:1px solid #eee}
                     <div id="m-list"></div>
                 </div>
             </div>
+
+            <div class="card" style="margin-top:15px">
+                <h3>Changer mon mot de passe</h3>
+                <div style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                    <input type="password" id="pw-old" placeholder="Ancien mot de passe">
+                    <input type="password" id="pw-new" placeholder="Nouveau mot de passe">
+                    <input type="password" id="pw-confirm" placeholder="Confirmer">
+                </div>
+                <button class="btn btn-s" style="margin-top:5px" onclick="changePassword()">Mettre à jour</button>
+            </div>
+
         </div>
 
         <div id="mt-cal" class="hidden">
@@ -161,7 +182,16 @@ td{padding:10px;border-bottom:1px solid #eee}
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:10px">
                     <input type="text" id="new-id" placeholder="ID"><input type="text" id="new-fn" placeholder="Nom"><input type="text" id="new-pw" placeholder="Pass">
                 </div>
-                <button class="btn btn-p" onclick="addUser()">Créer le compte</button>
+                <button class="btn btn-s" onclick="addUser()">Créer le compte</button>
+            </div>
+            <div class="card" style="display:flex; align-items:center; gap:15px">
+                <div>
+                    <strong>Crédit mensuel</strong>
+                    <small style="display:block; color:#888">Ajoute les jours à tous les membres</small>
+                </div>
+                <input type="number" id="credit-cp" placeholder="CP" class="in-small" value="2.5">
+                <input type="number" id="credit-rtt" placeholder="RTT" class="in-small" value="1">
+                <button class="btn btn-s" onclick="creditMensuel()">Appliquer le crédit</button>
             </div>
             <div class="card">
                 <table>
@@ -400,7 +430,39 @@ function switchSpace(s) {
 function changeMonth(dir) { currentMonth.setMonth(currentMonth.getMonth()+dir); renderCalendar(); }
 function logout() { localStorage.removeItem('lactaflow_user'); location.reload(); }
 
-window.doLogin=doLogin; window.submitDem=submitDem; window.mTab=mTab; window.aTab=aTab; window.switchSpace=switchSpace; window.updateRole=updateRole; window.addUser=addUser; window.deleteUser=deleteUser; window.decide=decide; window.saveUserFull=saveUserFull; window.changeMonth=changeMonth; window.uploadImg=uploadImg; window.resetPass=resetPass;window.logout=logout;
+async function creditMensuel() {
+    const cp = parseFloat(document.getElementById('credit-cp').value) || 0;
+    const rtt = parseFloat(document.getElementById('credit-rtt').value) || 0;
+    if(!confirm(`Ajouter ${cp} CP et ${rtt} RTT à tous les membres ?`)) return;
+    
+    for(const u of Object.values(DB_USERS)) {
+        await updateDoc(doc(db, 'users', u.id), {
+            cp: (u.cp || 0) + cp,
+            rtt: (u.rtt || 0) + rtt
+        });
+    }
+    alert("Crédit appliqué à tous les membres !");
+}
+
+async function changePassword() {
+    const old = document.getElementById('pw-old').value;
+    const nw = document.getElementById('pw-new').value;
+    const confirm = document.getElementById('pw-confirm').value;
+    
+    const u = DB_USERS[CU.toLowerCase()];
+    
+    if(u.pass !== old) { alert("Ancien mot de passe incorrect"); return; }
+    if(!nw) { alert("Le nouveau mot de passe est vide"); return; }
+    if(nw !== confirm) { alert("Les mots de passe ne correspondent pas"); return; }
+    
+    await updateDoc(doc(db, 'users', u.id), { pass: nw });
+    document.getElementById('pw-old').value = '';
+    document.getElementById('pw-new').value = '';
+    document.getElementById('pw-confirm').value = '';
+    alert("Mot de passe mis à jour !");
+}
+
+window.doLogin=doLogin; window.submitDem=submitDem; window.mTab=mTab; window.aTab=aTab; window.switchSpace=switchSpace; window.updateRole=updateRole; window.addUser=addUser; window.deleteUser=deleteUser; window.decide=decide; window.saveUserFull=saveUserFull; window.changeMonth=changeMonth; window.uploadImg=uploadImg; window.resetPass=resetPass;window.logout=logout;window.creditMensuel = creditMensuel;window.changePassword = changePassword;
 initData();
 </script>
 </body>
